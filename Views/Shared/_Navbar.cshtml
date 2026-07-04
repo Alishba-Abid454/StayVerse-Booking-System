@@ -1,0 +1,86 @@
+﻿<style>
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 16px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .navbar-brand {
+        font-size: 22px;
+        font-weight: 700;
+        color: #2563eb;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .navbar-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+    }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+            .navbar-links a:hover {
+                color: #2563eb;
+            }
+
+    .btn-nav {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .btn-nav-primary {
+        background: white;
+        border: 1.5px solid #1d4ed6;
+        color: white;
+    }
+
+        .btn-nav-primary:hover {
+            background: #1d4ed6;
+            color: white;
+        }
+
+    .btn-nav-outline {
+        border: 1.5px solid #1d4ed6;
+        color: white;
+        background: white;
+    }
+
+    @@media (max-width: 768px) {
+        .navbar-links {
+            display: none;
+        }
+    }
+</style>
+
+<nav class="navbar">
+    <a href="@Url.Action("Index", "Home")" class="navbar-brand">
+        <i class="fa-solid fa-utensils"></i> BookingBot
+    </a>
+    <div class="navbar-links">
+        <a href="@Url.Action("Index", "Home")">Home</a>
+        <a href="@Url.Action("Book", "Reservation")">Book a Table</a>
+        <a href="@Url.Action("MyReservations", "Reservation")">My Reservations</a>
+        <a href="@Url.Action("About", "Home")">About</a>
+        <a href="@Url.Action("Login", "Account")" class="btn-nav btn-nav-outline">Log In</a>
+        <a href="@Url.Action("SignUp", "Account")" class="btn-nav btn-nav-primary">Sign Up</a>
+    </div>
+</nav>

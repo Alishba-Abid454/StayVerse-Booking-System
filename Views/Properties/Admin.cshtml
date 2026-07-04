@@ -1,0 +1,296 @@
+﻿@model IEnumerable<Hotel_Booking_System.Models.ViewModels.PropertyViewModel>
+
+@{
+    ViewData["Title"] = "Manage Properties";
+    Layout = "_Layout";
+    var properties = Model ?? new List<Hotel_Booking_System.Models.ViewModels.PropertyViewModel>();
+}
+
+<style>
+    .admin-wrapper {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .page-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+    .btn-primary {
+        padding: 12px 24px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+    .btn-danger {
+        padding: 6px 14px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+    .btn-warning {
+        padding: 6px 14px;
+        background: #d97706;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-warning:hover {
+            background: #b45309;
+        }
+
+    .btn-outline {
+        padding: 6px 14px;
+        background: white;
+        color: #4b5563;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-outline:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+    .admin-table-section {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    th {
+        text-align: left;
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        padding: 12px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    td {
+        padding: 12px;
+        font-size: 14px;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+    }
+
+        td .property-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-inactive {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .status-pending {
+        background: #fef9c3;
+        color: #a16207;
+    }
+
+    .action-group {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #9ca3af;
+    }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+    .toast-success {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .toast-error {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+</style>
+
+<div class="admin-wrapper">
+    <div class="page-header">
+        <h2>Manage Properties</h2>
+        <a href="@Url.Action("Create", "Properties")" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Add New Property
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="toast-error">@TempData["Error"]</div>
+    }
+
+    <div class="admin-table-section">
+        @if (properties.Any())
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in properties)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(p.ImageUrl ?? "/images/default-property.jpg")" class="property-img" alt="@p.Name" />
+                            </td>
+                            <td>
+                                <strong>@p.Name</strong>
+                                @if (p.IsFeatured)
+                                {
+                                    <span style="font-size: 10px; background: #fef9c3; padding: 2px 8px; border-radius: 4px; margin-left: 4px;">★ Featured</span>
+                                }
+                            </td>
+                            <td>@p.Type</td>
+                            <td>@p.Location</td>
+                            <td>@p.Price</td>
+                            <td>@p.Rating.ToString("F1") ⭐</td>
+                            <td>
+                                <span class="status-badge status-@(p.IsActive ? "active" : "inactive")">
+                                    @(p.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-group">
+                                    <a href="@Url.Action("Edit", "Properties", new { id = p.Id })" class="btn-warning">
+                                        <i class="fa-regular fa-pen-to-square"></i> Edit
+                                    </a>
+
+                                    <!-- ✅ DIRECT DELETE FORM -->
+                                    <form asp-action="DeleteDirect" asp-controller="Properties" method="post" style="display: inline;"
+                                          onsubmit="return confirm('Are you sure you want to delete @p.Name?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@p.Id" />
+                                        <button type="submit" class="btn-danger">
+                                            <i class="fa-regular fa-trash-can"></i> Delete
+                                        </button>
+                                    </form>
+
+                                    <a href="@Url.Action("Details", "Properties", new { id = p.Id })" class="btn-outline">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fa-regular fa-building"></i>
+                <p>No properties found</p>
+                <a href="@Url.Action("Create", "Properties")" class="btn-primary" style="margin-top: 12px;">Add Your First Property</a>
+            </div>
+        }
+    </div>
+</div>

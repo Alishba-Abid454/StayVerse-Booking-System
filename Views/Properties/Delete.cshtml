@@ -1,0 +1,235 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = $"Delete - {Model?.Name ?? "Property"}";
+    Layout = "_Layout";
+}
+
+<style>
+    .admin-wrapper {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-header h2 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 24px;
+    }
+
+    .delete-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+
+    .delete-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #fee2e2;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin: 0 auto 20px;
+    }
+
+    .delete-card h3 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .delete-card p {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    .property-preview {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        text-align: left;
+    }
+
+        .property-preview .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+            .property-preview .row:last-child {
+                border-bottom: none;
+            }
+
+        .property-preview .label {
+            color: #6b7280;
+        }
+
+        .property-preview .value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .property-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 8px;
+            object-fit: cover;
+        }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-danger {
+        padding: 14px 32px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            color: white;
+        }
+
+    .btn-secondary {
+        padding: 14px 32px;
+        background: white;
+        color: #4b5563;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+
+        .btn-secondary:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+    .toast-error {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+</style>
+
+<div class="admin-wrapper">
+    <div class="page-header">
+        <h2>Delete Property</h2>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="toast-error">@TempData["Error"]</div>
+    }
+
+    @if (Model != null)
+    {
+        <div class="delete-card">
+            <div class="delete-icon">
+                <i class="fa-regular fa-trash-can"></i>
+            </div>
+            <h3>Are you sure?</h3>
+            <p>You are about to delete <strong>@Model.Name</strong> (ID: @Model.Id). This action cannot be undone.</p>
+
+            <div class="property-preview">
+                <div class="row">
+                    <span class="label">Property Name</span>
+                    <span class="value">@Model.Name</span>
+                </div>
+                <div class="row">
+                    <span class="label">Type</span>
+                    <span class="value">@Model.Type</span>
+                </div>
+                <div class="row">
+                    <span class="label">Location</span>
+                    <span class="value">@Model.Location</span>
+                </div>
+                <div class="row">
+                    <span class="label">Price</span>
+                    <span class="value">@Model.Price</span>
+                </div>
+                <div class="row">
+                    <span class="label">Rating</span>
+                    <span class="value">@Model.Rating ⭐</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="row" style="flex-direction: column; align-items: center; gap: 8px;">
+                        <span class="label">Image</span>
+                        <img src="@Model.ImageUrl" alt="@Model.Name" />
+                    </div>
+                }
+            </div>
+
+            <div class="btn-group">
+                <!-- ✅ POST form for DeleteConfirmed -->
+                <form asp-action="Delete" asp-controller="Properties" method="post" id="deleteForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn-danger" id="deleteBtn">
+                        <i class="fa-regular fa-trash-can"></i> Yes, Delete
+                    </button>
+                </form>
+                <a href="@Url.Action("Admin", "Properties")" class="btn-secondary">
+                    <i class="fa-regular fa-xmark"></i> Cancel
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="delete-card">
+            <h3>Property Not Found</h3>
+            <p>The property you're trying to delete doesn't exist.</p>
+            <a href="@Url.Action("Admin", "Properties")" class="btn-secondary">
+                <i class="fa-regular fa-arrow-left"></i> Back to Properties
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+    document.getElementById('deleteForm')?.addEventListener('submit', function(e) {
+        const btn = document.getElementById('deleteBtn');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+        btn.disabled = true;
+    });
+</script>

@@ -1,0 +1,306 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = "Cancel Reservation";
+}
+
+<style>
+    .cancel-wrapper {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .cancel-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(15,23,42,0.08);
+        text-align: center;
+    }
+
+    .cancel-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #fee2e2;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin: 0 auto 20px;
+    }
+
+    .cancel-card h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .cancel-card .sub {
+        font-size: 16px;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    .cancel-details {
+        text-align: left;
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+
+        .cancel-details .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+            .cancel-details .row:last-child {
+                border-bottom: none;
+            }
+
+        .cancel-details .label {
+            color: #6b7280;
+        }
+
+        .cancel-details .value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+    .cancel-form-group {
+        margin-bottom: 16px;
+        text-align: left;
+    }
+
+        .cancel-form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 6px;
+        }
+
+        .cancel-form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+            .cancel-form-group textarea:focus {
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .btn-keep {
+        padding: 14px 32px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        background: white;
+        color: #4b5563;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-keep:hover {
+            background: #f9fafb;
+        }
+
+    .btn-confirm-cancel {
+        padding: 14px 32px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+        .btn-confirm-cancel:hover {
+            background: #b91c1c;
+        }
+
+        .btn-confirm-cancel:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+    .not-found {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+        .not-found i {
+            font-size: 64px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .not-found h2 {
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .not-found p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+    /* ===== Toast Messages ===== */
+    .toast-error {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+        text-align: left;
+    }
+
+    @@media (max-width: 600px) {
+        .cancel-card {
+            padding: 24px 20px;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-keep, .btn-confirm-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+@if (Model != null)
+{
+    <div class="cancel-wrapper">
+        <div class="cancel-card">
+            <div class="cancel-icon">
+                <i class="fa-regular fa-trash-can"></i>
+            </div>
+            <h1>Cancel Reservation</h1>
+            <p class="sub">Are you sure you want to cancel this reservation? This action cannot be undone.</p>
+
+            <!-- Error Message -->
+            @if (TempData["Error"] != null)
+            {
+                <div class="toast-error">@TempData["Error"]</div>
+            }
+
+            <!-- Reservation Details -->
+            <div class="cancel-details">
+                <div class="row">
+                    <span class="label">Reservation Number</span>
+                    <span class="value">@Model.ReservationNumber</span>
+                </div>
+                <div class="row">
+                    <span class="label">Property</span>
+                    <span class="value">@Model.PropertyName</span>
+                </div>
+                <div class="row">
+                    <span class="label">Check-In</span>
+                    <span class="value">@Model.CheckInDate.ToString("dddd, MMMM dd, yyyy")</span>
+                </div>
+                <div class="row">
+                    <span class="label">Check-Out</span>
+                    <span class="value">@Model.CheckOutDate.ToString("dddd, MMMM dd, yyyy")</span>
+                </div>
+                <div class="row">
+                    <span class="label">Guests</span>
+                    <span class="value">@Model.NumberOfGuests guests</span>
+                </div>
+                <div class="row">
+                    <span class="label">Total Price</span>
+                    <span class="value">@Model.Currency @Model.TotalPrice.ToString("N0")</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.RoomTypeName))
+                {
+                    <div class="row">
+                        <span class="label">Room Type</span>
+                        <span class="value">@Model.RoomTypeName</span>
+                    </div>
+                }
+            </div>
+
+            <!-- Cancellation Form -->
+            <form asp-action="Cancel" asp-controller="Reservation" method="post" id="cancelForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <div class="cancel-form-group">
+                    <label for="reason">Reason for Cancellation (Optional)</label>
+                    <textarea id="reason" name="reason" placeholder="Please tell us why you're cancelling..."></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <a href="@Url.Action("Details", "Reservation", new { id = Model.Id })" class="btn-keep">
+                        <i class="fa-regular fa-arrow-left"></i> Keep Booking
+                    </a>
+                    <button type="submit" class="btn-confirm-cancel" id="confirmCancelBtn">
+                        <i class="fa-regular fa-trash-can"></i> Yes, Cancel Reservation
+                    </button>
+                </div>
+            </form>
+
+            <p style="font-size: 13px; color: #9ca3af; margin-top: 20px;">
+                <i class="fa-regular fa-circle-info"></i> Cancelling within 24 hours of check-in may incur a fee.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('cancelForm')?.addEventListener('submit', function(e) {
+            const confirmBtn = document.getElementById('confirmCancelBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cancelling...';
+            return true;
+        });
+    </script>
+}
+else
+{
+    <div class="cancel-wrapper">
+        <div class="cancel-card">
+            <div class="not-found">
+                <i class="fa-regular fa-calendar-xmark"></i>
+                <h2>Reservation Not Found</h2>
+                <p>The reservation you're trying to cancel doesn't exist or you don't have permission.</p>
+                <a href="@Url.Action("MyReservations", "Reservation")" class="btn-keep">
+                    <i class="fa-regular fa-arrow-left"></i> Back to My Reservations
+                </a>
+            </div>
+        </div>
+    </div>
+}

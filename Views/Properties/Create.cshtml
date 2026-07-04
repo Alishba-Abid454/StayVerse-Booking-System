@@ -1,0 +1,412 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = "Add New Property";
+    Layout = "_Layout";
+}
+
+<style>
+    .admin-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .page-header h2 {
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 6px;
+    }
+
+    .form-label .required {
+        color: #dc2626;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.15s;
+        background: #fafafa;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc2626;
+        background: #fef2f2;
+    }
+
+    .validation-message {
+        font-size: 12px;
+        color: #dc2626;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .form-check input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .form-check label {
+        font-size: 14px;
+        color: #4b5563;
+        cursor: pointer;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        padding: 14px 32px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+    .btn-secondary {
+        padding: 14px 32px;
+        background: white;
+        color: #4b5563;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+
+    .toast-error {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .toast-error ul {
+        margin: 6px 0 0 20px;
+        font-weight: 400;
+    }
+
+    .toast-success {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .gallery-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .gallery-preview img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+    }
+
+    @@media (max-width: 768px) {
+        .row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="admin-wrapper">
+    <div class="page-header">
+        <h2>Add New Property</h2>
+        <a href="@Url.Action("Admin", "Properties")" class="btn-secondary">
+            <i class="fa-regular fa-arrow-left"></i> Back to Properties
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-success">@TempData["Success"]</div>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="toast-error">
+            <strong>Please fix the following errors:</strong>
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="form-card">
+        <form asp-action="Create" asp-controller="Properties" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Basic Information -->
+            <h4 style="margin-bottom: 20px; color: #0f172a;">Basic Information</h4>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Name">Property Name <span class="required">*</span></label>
+                    <input type="text" class="form-control" asp-for="Name" placeholder="e.g. Grand Plaza Hotel" />
+                    <span asp-validation-for="Name" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="Type">Property Type <span class="required">*</span></label>
+                    <select class="form-control" asp-for="Type">
+                        <option value="">Select Type</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Resort">Resort</option>
+                        <option value="Lodge">Lodge</option>
+                        <option value="Restaurant">Restaurant</option>
+                    </select>
+                    <span asp-validation-for="Type" class="validation-message"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="PostalCode">Postal Code <span class="required">*</span></label>
+                    <input type="text" class="form-control" asp-for="PostalCode" placeholder="e.g. 10001" />
+                    <span asp-validation-for="PostalCode" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="Location">Location <span class="required">*</span></label>
+                    <input type="text" class="form-control" asp-for="Location" placeholder="e.g. Downtown, New York" />
+                    <span asp-validation-for="Location" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="Address">Address</label>
+                    <input type="text" class="form-control" asp-for="Address" placeholder="e.g. 123 Broadway, New York, NY 10001" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="City">City</label>
+                    <input type="text" class="form-control" asp-for="City" placeholder="e.g. New York" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="Country">Country</label>
+                    <input type="text" class="form-control" asp-for="Country" placeholder="e.g. USA" />
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <h4 style="margin: 30px 0 20px; color: #0f172a;">Pricing</h4>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="BasePrice">Base Price per Night <span class="required">*</span></label>
+                    <input type="number" class="form-control" asp-for="BasePrice" placeholder="e.g. 189" step="0.01" min="0" />
+                    <span asp-validation-for="BasePrice" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="Currency">Currency</label>
+                    <select class="form-control" asp-for="Currency">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="PKR">PKR (Rs)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Price">Display Price</label>
+                    <input type="text" class="form-control" asp-for="Price" placeholder="e.g. $189/night" />
+                    <span asp-validation-for="Price" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="MinNights">Minimum Nights <span class="required">*</span></label>
+                    <input type="number" class="form-control" asp-for="MinNights" placeholder="e.g. 2" min="1" value="1" />
+                    <span asp-validation-for="MinNights" class="validation-message"></span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <h4 style="margin: 30px 0 20px; color: #0f172a;">Description</h4>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="Description">Short Description <span class="required">*</span></label>
+                <textarea class="form-control" asp-for="Description" rows="2" placeholder="Brief description of the property"></textarea>
+                <span asp-validation-for="Description" class="validation-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="FullDescription">Full Description</label>
+                <textarea class="form-control" asp-for="FullDescription" rows="4" placeholder="Detailed description of the property"></textarea>
+            </div>
+
+            <!-- Images -->
+            <h4 style="margin: 30px 0 20px; color: #0f172a;">Images</h4>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="ImageUrl">Main Image URL <span class="required">*</span></label>
+                <input type="text" class="form-control" asp-for="ImageUrl" placeholder="/images/properties/hotel-name.jpg" />
+                <span asp-validation-for="ImageUrl" class="validation-message"></span>
+                <div class="help-text">Main image shown on property cards and details page</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="GalleryImagesInput">Gallery Images (comma separated)</label>
+                <input type="text" class="form-control" asp-for="GalleryImagesInput" placeholder="/images/properties/room1.jpg, /images/properties/room2.jpg, /images/properties/bathroom.jpg" />
+                <div class="help-text">Add 2-4 additional images for the property gallery</div>
+            </div>
+
+            <!-- Features -->
+            <h4 style="margin: 30px 0 20px; color: #0f172a;">Features</h4>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="MaxGuests">Max Guests <span class="required">*</span></label>
+                    <input type="number" class="form-control" asp-for="MaxGuests" placeholder="e.g. 4" min="1" value="2" />
+                    <span asp-validation-for="MaxGuests" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Featured Property</label>
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="IsFeatured" />
+                        <label asp-for="IsFeatured">Mark as Featured (shows on Home page)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Amenities -->
+            <h4 style="margin: 30px 0 20px; color: #0f172a;">Amenities</h4>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="AmenitiesInput">Amenities (comma separated)</label>
+                <input type="text" class="form-control" asp-for="AmenitiesInput" placeholder="Free WiFi, Parking, Pool, Spa, Restaurant" />
+                <div class="help-text">Separate amenities with commas</div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="btn-group">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-regular fa-floppy-disk"></i> Save Property
+                </button>
+                <a href="@Url.Action("Admin", "Properties")" class="btn-secondary">
+                    <i class="fa-regular fa-xmark"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Preview gallery images as user types
+        document.querySelector('[name="GalleryImagesInput"]')?.addEventListener('input', function() {
+            const preview = document.getElementById('galleryPreview');
+            if (preview) {
+                const urls = this.value.split(',').map(s => s.trim()).filter(s => s);
+                preview.innerHTML = urls.map(url =>
+                    `<img src="${url}" onerror="this.style.display='none'" />`
+                ).join('');
+            }
+        });
+    </script>
+}

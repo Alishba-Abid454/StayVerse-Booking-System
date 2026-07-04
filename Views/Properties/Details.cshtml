@@ -1,0 +1,927 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = Model?.Name ?? "Property Details";
+    var reviews = ViewBag.Reviews as IEnumerable<Hotel_Booking_System.Models.ViewModels.ReviewViewModel> ?? new List<Hotel_Booking_System.Models.ViewModels.ReviewViewModel>();
+    var averageRating = ViewBag.AverageRating as double? ?? 0;
+    var categoryRatings = ViewBag.CategoryRatings as Dictionary<string, double> ?? new Dictionary<string, double>();
+}
+
+<style>
+    /* ===== General ===== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: #f5f7fa;
+        color: #1a1a1a;
+    }
+
+    .details-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px 40px;
+    }
+
+    /* ===== Back Button ===== */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0066d9;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 15px;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+    }
+
+        .back-link:hover {
+            color: #004999;
+            text-decoration: underline;
+        }
+
+    /* ===== Property Header ===== */
+    .property-header {
+        background: white;
+        border-radius: 12px;
+        padding: 28px 36px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        margin-bottom: 24px;
+    }
+
+        .property-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #003b6f;
+            margin-bottom: 6px;
+        }
+
+        .property-header .location {
+            font-size: 15px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+    .rating-highlight {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+    }
+
+        .rating-highlight .score {
+            background: #003b6f;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            padding: 6px 16px;
+            border-radius: 8px;
+            line-height: 1.4;
+        }
+
+        .rating-highlight .score-text {
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+            .rating-highlight .score-text span {
+                font-weight: 700;
+            }
+
+    /* ===== Sign In Banner ===== */
+    .signin-banner {
+        background: #e8f0fe;
+        border-radius: 12px;
+        padding: 20px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+        .signin-banner p {
+            font-size: 15px;
+            color: #003b6f;
+        }
+
+            .signin-banner p strong {
+                font-weight: 700;
+            }
+
+        .signin-banner .btn-signin {
+            padding: 10px 28px;
+            background: #0066d9;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .signin-banner .btn-signin:hover {
+                background: #0052b3;
+            }
+
+        .signin-banner .btn-create {
+            color: #0066d9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            margin-left: 10px;
+        }
+
+            .signin-banner .btn-create:hover {
+                text-decoration: underline;
+            }
+
+    /* ===== Image Gallery ===== */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr 1fr;
+        grid-template-rows: 380px 180px;
+        gap: 6px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        background: #e5e7eb;
+    }
+
+        .gallery-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-grid .main-img {
+            grid-row: 1 / 3;
+        }
+
+    /* ===== Main Content Grid ===== */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2.2fr 1fr;
+        gap: 28px;
+    }
+
+    /* ===== Left Column ===== */
+    .left-column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    /* ===== Cards ===== */
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+        .card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #003b6f;
+            margin-bottom: 14px;
+        }
+
+        .card p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #4b5563;
+            margin-bottom: 14px;
+        }
+
+        .card .highlight {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .card .distance-note {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+    /* ===== Facilities ===== */
+    .facilities-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px 28px;
+    }
+
+    .facility-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: #4b5563;
+        padding: 6px 0;
+    }
+
+        .facility-item .icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+    .property-highlights {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .highlight-tag {
+        padding: 8px 18px;
+        background: #e8f0fe;
+        color: #003b6f;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* ===== Reviews ===== */
+    .review-summary {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .review-summary .big-score {
+            font-size: 38px;
+            font-weight: 700;
+            color: #003b6f;
+            line-height: 1;
+        }
+
+            .review-summary .big-score span {
+                font-size: 18px;
+                font-weight: 400;
+                color: #6b7280;
+            }
+
+        .review-summary .review-text {
+            font-size: 15px;
+            color: #4b5563;
+        }
+
+            .review-summary .review-text strong {
+                color: #1a1a1a;
+            }
+
+    .review-categories {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 32px;
+        margin-bottom: 20px;
+    }
+
+    .review-category {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        padding: 4px 0;
+        color: #4b5563;
+    }
+
+        .review-category .cat-score {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+    .btn-reviews {
+        padding: 12px 28px;
+        background: #0066d9;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-reviews:hover {
+            background: #0052b3;
+        }
+
+    /* ===== Individual Review ===== */
+    .review-item {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 18px;
+        margin-top: 18px;
+    }
+
+        .review-item:first-child {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .review-item .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .review-item .reviewer-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .review-item .reviewer-country {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .review-item .review-rating {
+            font-weight: 700;
+            color: #003b6f;
+            font-size: 18px;
+        }
+
+        .review-item .review-comment {
+            font-size: 15px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .review-item .review-date {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 6px;
+        }
+
+    /* ===== Right Column ===== */
+    .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    /* ===== Availability Card ===== */
+    .availability-card {
+        background: white;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        border: 1px solid #e5e7eb;
+    }
+
+        .availability-card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #003b6f;
+            margin-bottom: 18px;
+        }
+
+        .availability-card .sub {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 14px;
+        }
+
+        .availability-card .date-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+            .availability-card .date-inputs input {
+                padding: 12px 14px;
+                border: 1.5px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 15px;
+                width: 100%;
+            }
+
+                .availability-card .date-inputs input:focus {
+                    outline: none;
+                    border-color: #0066d9;
+                }
+
+        .availability-card .guest-select {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+            .availability-card .guest-select select {
+                padding: 12px 14px;
+                border: 1.5px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 14px;
+                flex: 1;
+                background: white;
+            }
+
+    .btn-search-rooms {
+        width: 100%;
+        padding: 16px;
+        background: #0066d9;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 17px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+        .btn-search-rooms:hover {
+            background: #0052b3;
+        }
+
+    /* ===== Room Types ===== */
+    .room-types {
+        background: white;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+        .room-types h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #003b6f;
+            margin-bottom: 14px;
+        }
+
+    .room-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+        .room-item:last-child {
+            border-bottom: none;
+        }
+
+        .room-item .room-info .room-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .room-item .room-info .room-bed {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .room-item .room-price {
+            text-align: right;
+        }
+
+            .room-item .room-price .price {
+                font-weight: 700;
+                font-size: 18px;
+                color: #1a1a1a;
+            }
+
+            .room-item .room-price .per-night {
+                font-size: 13px;
+                color: #6b7280;
+            }
+
+    .btn-show-price {
+        padding: 8px 20px;
+        background: #0066d9;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 4px;
+    }
+
+        .btn-show-price:hover {
+            background: #0052b3;
+        }
+
+    /* ===== Error/Not Found ===== */
+    .not-found {
+        max-width: 600px;
+        margin: 80px auto;
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+        .not-found i {
+            font-size: 64px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .not-found h2 {
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .not-found p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+    /* ===== Responsive ===== */
+    @@media (max-width: 1200px) {
+        .details-wrapper {
+            padding: 20px 24px;
+        }
+
+        .gallery-grid {
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-rows: 300px 150px;
+        }
+
+        .facilities-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 1024px) {
+        .content-grid {
+            grid-template-columns: 1.8fr 1fr;
+        }
+
+        .gallery-grid {
+            grid-template-columns: 1.5fr 1fr 1fr;
+            grid-template-rows: 280px 140px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .details-wrapper {
+            padding: 16px;
+        }
+
+        .gallery-grid {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 220px 130px;
+        }
+
+            .gallery-grid .main-img {
+                grid-row: 1 / 3;
+            }
+
+        .property-header h1 {
+            font-size: 24px;
+        }
+
+        .property-header {
+            padding: 20px;
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        .facilities-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .review-categories {
+            grid-template-columns: 1fr;
+        }
+
+        .signin-banner {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .review-summary {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .room-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .availability-card {
+            padding: 20px;
+        }
+
+        .room-types {
+            padding: 20px;
+        }
+
+        .availability-card .guest-select {
+            flex-direction: column;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: 200px 120px 120px 120px;
+        }
+
+            .gallery-grid .main-img {
+                grid-row: 1 / 2;
+            }
+
+        .property-header {
+            padding: 16px;
+        }
+
+            .property-header h1 {
+                font-size: 20px;
+            }
+
+        .card {
+            padding: 16px;
+        }
+
+        .details-wrapper {
+            padding: 12px;
+        }
+
+        .rating-highlight {
+            gap: 12px;
+        }
+
+            .rating-highlight .score {
+                font-size: 20px;
+                padding: 4px 12px;
+            }
+    }
+</style>
+
+@if (Model != null)
+{
+    <div class="details-wrapper">
+        <!-- Back Link -->
+        <a href="@Url.Action("Index", "Properties")" class="back-link">
+            ← Back to all properties
+        </a>
+
+        <!-- Property Header -->
+        <div class="property-header">
+            <h1>@Model.Name</h1>
+            <div class="location">
+                📍 @Model.Location
+                @if (!string.IsNullOrEmpty(Model.City) || !string.IsNullOrEmpty(Model.Country))
+                {
+                    <span style="color: #6b7280; margin: 0 4px;">-</span>
+                    <span>@Model.City, @Model.Country</span>
+                }
+            </div>
+
+            <div class="rating-highlight">
+                <span class="score">@Model.Rating</span>
+                <span class="score-text">
+                    <span>Very good</span> · @Model.TotalReviews.ToString("N0") reviews
+                </span>
+            </div>
+        </div>
+
+        <!-- Sign In Banner -->
+        <div class="signin-banner">
+            <p><strong>Sign in, save money</strong> — To see if you can save 10% or more at this property, sign in</p>
+            <div>
+                <a href="@Url.Action("Login", "Account")" class="btn-signin">Sign in</a>
+                <a href="@Url.Action("Register", "Account")" class="btn-create">Create a free account</a>
+            </div>
+        </div>
+
+        <!-- Image Gallery -->
+        <div class="gallery-grid">
+            <img src="@(Model.ImageUrl ?? "/images/default-property.jpg")" alt="@Model.Name" class="main-img" />
+            @if (Model.GalleryImages != null && Model.GalleryImages.Any())
+            {
+                @foreach (var img in Model.GalleryImages.Take(4))
+                {
+                    <img src="@img" alt="Gallery image" />
+                }
+            }
+            else
+            {
+                <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=400&q=80" alt="Room" />
+                <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=400&q=80" alt="Bathroom" />
+                <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=400&q=80" alt="Lobby" />
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=80" alt="Room" />
+            }
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Description -->
+                <div class="card">
+                    <h2>About @Model.Name</h2>
+                    <p>@(Model.FullDescription ?? Model.Description ?? "No description available.")</p>
+                    @if (Model.Rating > 0)
+                    {
+                        <p><span class="highlight">Couples particularly like the location</span> — they rated it @(Math.Round(Model.Rating + 0.2, 1)) for a two-person trip.</p>
+                    }
+                    <div class="distance-note">Distance in property description is calculated using © OpenStreetMap</div>
+                </div>
+
+                <!-- Facilities -->
+                @if (Model.Amenities != null && Model.Amenities.Any())
+                {
+                    <div class="card">
+                        <h2>Most popular facilities</h2>
+                        <div class="facilities-grid">
+                            @foreach (var amenity in Model.Amenities)
+                            {
+                                <div class="facility-item">
+                                    <span class="icon">✓</span>
+                                    @amenity
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Property Highlights -->
+                @if (Model.Highlights != null && Model.Highlights.Any())
+                {
+                    <div class="card">
+                        <h2>Property highlights</h2>
+                        <div class="property-highlights">
+                            @foreach (var highlight in Model.Highlights)
+                            {
+                                <span class="highlight-tag">@highlight</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Reviews -->
+                <div class="card">
+                    <h2>Guest reviews</h2>
+
+                    <div class="review-summary">
+                        <div>
+                            <div class="big-score">@Model.Rating <span>/ 10</span></div>
+                            <div style="font-weight: 600; font-size: 16px; color: #1a1a1a;">Very good</div>
+                            <div style="font-size: 14px; color: #6b7280;">@Model.TotalReviews.ToString("N0") reviews</div>
+                        </div>
+                        <div style="flex: 1;">
+                            @if (categoryRatings.Any())
+                            {
+                                <div class="review-categories">
+                                    @foreach (var cat in categoryRatings)
+                                    {
+                                        <div class="review-category">
+                                            <span>@cat.Key</span>
+                                            <span class="cat-score">@cat.Value.ToString("F1")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <a href="#reviews" class="btn-reviews">Read all reviews</a>
+                        </div>
+                    </div>
+
+                    @if (reviews.Any())
+                    {
+                        @foreach (var review in reviews.Take(2))
+                        {
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div>
+                                        <span class="reviewer-name">@review.UserName</span>
+                                        @if (!string.IsNullOrEmpty(review.Country))
+                                        {
+                                            <span class="reviewer-country">· @review.Country</span>
+                                        }
+                                    </div>
+                                    <span class="review-rating">@review.Rating</span>
+                                </div>
+                                <div class="review-comment">"@review.Comment"</div>
+                                <div class="review-date">@review.Date</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p style="color: #6b7280; text-align: center; padding: 20px 0;">No reviews yet. Be the first to review!</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Availability -->
+                <div class="availability-card">
+                    <h2>Availability</h2>
+                    <div class="sub">Select dates to see this property's availability and prices</div>
+
+                    <div class="date-inputs">
+                        <input type="date" id="checkin" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <input type="date" id="checkout" value="@DateTime.Now.AddDays(2).ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <div class="guest-select">
+                        <select id="adults">
+                            <option value="1">1 adult</option>
+                            <option value="2" selected>2 adults</option>
+                            <option value="3">3 adults</option>
+                            <option value="4">4 adults</option>
+                        </select>
+                        <select id="children">
+                            <option value="0">0 children</option>
+                            <option value="1">1 child</option>
+                            <option value="2">2 children</option>
+                            <option value="3">3 children</option>
+                        </select>
+                        <select id="rooms">
+                            <option value="1" selected>1 room</option>
+                            <option value="2">2 rooms</option>
+                            <option value="3">3 rooms</option>
+                        </select>
+                    </div>
+
+                    <a href="@Url.Action("Book", "Reservation", new { propertyId = Model.Id })" class="btn-search-rooms">
+                        Check Availability
+                    </a>
+                </div>
+
+                <!-- Room Types -->
+                @if (Model.RoomTypes != null && Model.RoomTypes.Any())
+                {
+                    <div class="room-types">
+                        <h2>Room types</h2>
+
+                        @foreach (var room in Model.RoomTypes)
+                        {
+                            <div class="room-item">
+                                <div class="room-info">
+                                    <div class="room-name">@room.Name</div>
+                                    <div class="room-bed">@room.BedType · @room.MaxGuests guests</div>
+                                </div>
+                                <div class="room-price">
+                                    <div class="price">$@room.PricePerNight</div>
+                                    <div class="per-night">/ night</div>
+                                    <a href="@Url.Action("Book", "Reservation", new { propertyId = Model.Id, roomTypeId = room.Id })" class="btn-show-price">
+                                        Book Now
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="details-wrapper">
+        <div class="not-found">
+            <i class="fa-regular fa-building"></i>
+            <h2>Property Not Found</h2>
+            <p>The property you're looking for doesn't exist or has been removed.</p>
+            <a href="@Url.Action("Index", "Properties")" class="btn-book" style="width: auto; padding: 12px 32px;">
+                Back to Properties
+            </a>
+        </div>
+    </div>
+}
+
+<script>
+    // Simple function to handle booking navigation
+    document.querySelectorAll('.btn-show-price, .btn-search-rooms').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // The href already handles navigation
+        });
+    });
+</script>

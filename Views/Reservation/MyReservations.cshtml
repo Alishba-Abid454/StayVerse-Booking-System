@@ -1,0 +1,468 @@
+﻿@using Hotel_Booking_System.Models
+@model List<Reservation>
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    /* ===== Header Banner ===== */
+    .res-hero {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+        padding: 46px 20px 80px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .res-hero::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .res-hero h1 {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .res-hero p {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+    .reservations-wrapper {
+        max-width: 880px;
+        margin: -50px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* ===== Summary Strip ===== */
+    .summary-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .summary-pill {
+        background: white;
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 8px 24px rgba(15,23,42,0.07);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .summary-pill-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+
+    .icon-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .icon-green {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .icon-amber {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .summary-pill-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .summary-pill-label {
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    /* ===== Page Header ===== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+        .page-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+    .btn-new {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 6px 16px rgba(37,99,235,0.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.15s;
+    }
+
+        .btn-new:hover {
+            transform: translateY(-2px);
+        }
+
+    /* ===== Reservation Card ===== */
+    .reservation-card {
+        background: white;
+        border-radius: 16px;
+        padding: 22px 26px;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid transparent;
+        transition: transform 0.15s, box-shadow 0.15s;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+        .reservation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(15,23,42,0.1);
+        }
+
+        .reservation-card.confirmed {
+            border-left-color: #16a34a;
+        }
+
+        .reservation-card.pending {
+            border-left-color: #d97706;
+        }
+
+        .reservation-card.checkedin {
+            border-left-color: #2563eb;
+        }
+
+        .reservation-card.checkedout {
+            border-left-color: #6b7280;
+        }
+
+        .reservation-card.cancelled {
+            border-left-color: #dc2626;
+            opacity: 0.75;
+        }
+
+    .reservation-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .reservation-date-block {
+        width: 64px;
+        height: 56px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-align: center;
+    }
+
+        .reservation-date-block .day {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1;
+        }
+
+        .reservation-date-block .month {
+            font-size: 10.5px;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+    .reservation-details h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #0f172a;
+    }
+
+    .reservation-meta {
+        font-size: 13px;
+        color: #6b7280;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+        .reservation-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+    .reservation-number {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 4px;
+    }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .status-confirmed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-pending {
+        background: #fef9c3;
+        color: #a16207;
+    }
+
+    .status-checkedin {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-checkedout {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .status-cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .reservation-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .reservation-price {
+        text-align: right;
+        margin-right: 6px;
+    }
+
+        .reservation-price .amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .reservation-price .nights {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        border: 1.5px solid #e5e7eb;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #4b5563;
+        transition: all 0.15s;
+    }
+
+        .btn-icon:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .btn-icon.danger:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        text-align: center;
+        padding: 70px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+        color: #6b7280;
+    }
+
+    .empty-state-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 18px;
+    }
+
+    .empty-state p {
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    .empty-state span {
+        font-size: 13px;
+        color: #9ca3af;
+    }
+
+    @@media (max-width: 768px) {
+        .summary-strip {
+            grid-template-columns: 1fr;
+        }
+
+        .reservation-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+    }
+</style>
+
+@functions {
+    // Normalizes "Checked In" / "CheckedIn" / "checked-in" etc. into a single CSS-safe slug
+    string StatusSlug(string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "pending";
+        return status.Replace(" ", "").Replace("-", "").ToLower();
+    }
+}
+
+<!-- ===== Hero ===== -->
+<section class="res-hero">
+    <h1>My Reservations</h1>
+    <p>Track, modify, or cancel your upcoming bookings</p>
+</section>
+
+<div class="reservations-wrapper">
+    <!-- Summary Strip -->
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <div class="summary-pill-icon icon-blue"><i class="fa-regular fa-calendar"></i></div>
+            <div>
+                <div class="summary-pill-value">@(Model?.Count ?? 0)</div>
+                <div class="summary-pill-label">Total Reservations</div>
+            </div>
+        </div>
+        <div class="summary-pill">
+            <div class="summary-pill-icon icon-green"><i class="fa-regular fa-circle-check"></i></div>
+            <div>
+                <div class="summary-pill-value">@(Model?.Count(r => r.Status == "Confirmed") ?? 0)</div>
+                <div class="summary-pill-label">Confirmed</div>
+            </div>
+        </div>
+        <div class="summary-pill">
+            <div class="summary-pill-icon icon-amber"><i class="fa-regular fa-clock"></i></div>
+            <div>
+                <div class="summary-pill-value">@(Model?.Count(r => r.Status == "Pending") ?? 0)</div>
+                <div class="summary-pill-label">Pending</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <h2>Upcoming &amp; Past Bookings</h2>
+        <a href="@Url.Action("Book", "Reservation")" class="btn-new"><i class="fa-solid fa-plus"></i> New Reservation</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var r in Model)
+        {
+            var nights = (r.CheckOutDate - r.CheckInDate).Days;
+            var slug = StatusSlug(r.Status);
+
+            <div class="reservation-card @slug">
+                <div class="reservation-left">
+                    <div class="reservation-date-block">
+                        <div class="day">@r.CheckInDate.Day</div>
+                        <div class="month">@r.CheckInDate.ToString("MMM")</div>
+                    </div>
+                    <div class="reservation-details">
+                        <h4>@(r.Property?.Name ?? "Property") &mdash; @(r.RoomType?.Name ?? "Room")</h4>
+                        <div class="reservation-meta">
+                            <span><i class="fa-regular fa-calendar"></i> @r.CheckInDate.ToString("MMM dd") &rarr; @r.CheckOutDate.ToString("MMM dd, yyyy")</span>
+                            <span><i class="fa-regular fa-user"></i> @r.NumberOfGuests Guests</span>
+                            <span><i class="fa-solid fa-door-closed"></i> @r.NumberOfRooms Room(s)</span>
+                        </div>
+                        <div class="reservation-number">Booking #@r.ReservationNumber</div>
+                    </div>
+                </div>
+                <div class="reservation-actions">
+                    <div class="reservation-price">
+                        <div class="amount">@r.Currency @r.TotalPrice.ToString("N0")</div>
+                        <div class="nights">@nights night@(nights == 1 ? "" : "s")</div>
+                    </div>
+                    <span class="status-badge status-@slug">@r.Status</span>
+                    <button class="btn-icon" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="btn-icon danger" title="Cancel"><i class="fa-regular fa-trash-can"></i></button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="fa-regular fa-calendar-xmark"></i></div>
+            <p>You don't have any reservations yet.</p>
+            <span>Once you book a stay, it'll show up here.</span>
+            <div style="margin-top:20px;">
+                <a href="@Url.Action("Book", "Reservation")" class="btn-new">Book Your First Stay</a>
+            </div>
+        </div>
+    }
+</div>

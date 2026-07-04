@@ -1,0 +1,394 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "_Layout";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    .auth-page {
+        max-width: 980px;
+        margin: 50px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 16px 40px rgba(15,23,42,0.1);
+    }
+
+    /* ===== Left gradient panel ===== */
+    .auth-side {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+        color: white;
+        padding: 50px 38px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .auth-side::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .auth-side::after {
+            content: "";
+            position: absolute;
+            bottom: -70px;
+            left: -50px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+        }
+
+    .auth-side-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 22px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-side h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-side p {
+        font-size: 14px;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-perk {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 2;
+    }
+
+        .auth-perk i {
+            color: #bbf7d0;
+        }
+
+    /* ===== Right form panel ===== */
+    .auth-form-panel {
+        background: white;
+        padding: 50px 44px;
+    }
+
+    .auth-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #0f172a;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 28px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 7px;
+    }
+
+    .input-wrap {
+        position: relative;
+    }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px 12px 40px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        background: #fafafa;
+        transition: all 0.15s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+    .validation-message {
+        font-size: 12px;
+        color: #dc2626;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .btn-auth {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 8px;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+        transition: transform 0.15s;
+    }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-auth:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .auth-footer {
+        text-align: center;
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 22px;
+    }
+
+        .auth-footer a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .auth-footer a:hover {
+                text-decoration: underline;
+            }
+
+    /* ===== Toast/Error Messages ===== */
+    .toast-error {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+        .toast-error ul {
+            margin: 6px 0 0 20px;
+            font-weight: 400;
+        }
+
+    .toast-success {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    @@media (max-width: 800px) {
+        .auth-page {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-side {
+            display: none;
+        }
+
+        .row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="auth-page">
+    <!-- Left gradient panel -->
+    <div class="auth-side">
+        <div class="auth-side-icon"><i class="fa-solid fa-utensils"></i></div>
+        <h2>Join BookingBot today</h2>
+        <p>Create an account to book tables in seconds and keep all your reservations organized in one place.</p>
+        <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> Faster checkout on every booking</div>
+        <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> SMS &amp; email confirmations</div>
+        <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> Exclusive offers for members</div>
+    </div>
+
+    <!-- Right form panel -->
+    <div class="auth-form-panel">
+        <h2 class="auth-title">Create Your Account</h2>
+        <p class="auth-subtitle">Book tables faster and track your reservations</p>
+
+        <!-- Display validation errors -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="toast-error">
+                <strong>Please fix the following errors:</strong>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="FirstName">First Name <span style="color:#dc2626">*</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" class="form-control" asp-for="FirstName" placeholder="Enter first name" required />
+                    </div>
+                    <span asp-validation-for="FirstName" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="LastName">Last Name <span style="color:#dc2626">*</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" class="form-control" asp-for="LastName" placeholder="Enter last name" required />
+                    </div>
+                    <span asp-validation-for="LastName" class="validation-message"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="Email">Email Address <span style="color:#dc2626">*</span></label>
+                <div class="input-wrap">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" class="form-control" asp-for="Email" placeholder="you@example.com" required />
+                </div>
+                <span asp-validation-for="Email" class="validation-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="PhoneNumber">Phone Number <span style="color:#dc2626">*</span></label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="tel" class="form-control" asp-for="PhoneNumber" placeholder="+92 300 1234567" required />
+                </div>
+                <span asp-validation-for="PhoneNumber" class="validation-message"></span>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Country">Country</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-globe"></i>
+                        <input type="text" class="form-control" asp-for="Country" placeholder="Your country" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="City">City</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-city"></i>
+                        <input type="text" class="form-control" asp-for="City" placeholder="Your city" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label" asp-for="Password">Password <span style="color:#dc2626">*</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" class="form-control" asp-for="Password" placeholder="Create a password" required />
+                    </div>
+                    <span asp-validation-for="Password" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" asp-for="ConfirmPassword">Confirm Password <span style="color:#dc2626">*</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Re-enter password" required />
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="validation-message"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-auth" id="registerBtn">
+                <i class="fa-regular fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="@Url.Action("Login", "Account")">Log in</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('form')?.addEventListener('submit', function() {
+        const btn = document.getElementById('registerBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account...';
+    });
+</script>

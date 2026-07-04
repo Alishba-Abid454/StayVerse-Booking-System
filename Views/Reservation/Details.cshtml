@@ -1,0 +1,314 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = $"Reservation {Model?.ReservationNumber}";
+}
+
+<style>
+    .details-wrapper {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+    }
+
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .detail-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 32px;
+    }
+
+    .detail-item {
+        padding: 8px 0;
+    }
+
+        .detail-item .label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .detail-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-top: 2px;
+        }
+
+    .detail-actions {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 2px solid #f0f0f0;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-back {
+        padding: 10px 20px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        text-decoration: none;
+        color: #4b5563;
+        font-weight: 600;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-back:hover {
+            background: #f9fafb;
+        }
+
+    .btn-cancel {
+        padding: 10px 20px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-cancel:hover {
+            background: #b91c1c;
+        }
+
+    .status-badge-large {
+        padding: 8px 20px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .status-Confirmed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-Pending {
+        background: #fef9c3;
+        color: #a16207;
+    }
+
+    .status-CheckedIn {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-CheckedOut {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .status-Cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .not-found {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+        .not-found i {
+            font-size: 64px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .not-found h2 {
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .not-found p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+    @@media (max-width: 600px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+@if (Model != null)
+{
+    <div class="details-wrapper">
+        <div class="detail-card">
+            <div class="detail-header">
+                <h1>Reservation Details</h1>
+                <span class="status-badge-large status-@(Model.Status ?? "Pending")">@Model.Status</span>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">Reservation Number</div>
+                    <div class="value">@Model.ReservationNumber</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Property</div>
+                    <div class="value">@Model.PropertyName</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Check-In</div>
+                    <div class="value">@Model.CheckInDate.ToString("dddd, MMMM dd, yyyy")</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Check-Out</div>
+                    <div class="value">@Model.CheckOutDate.ToString("dddd, MMMM dd, yyyy")</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Nights</div>
+                    <div class="value">@Model.NumberOfNights nights</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Guests</div>
+                    <div class="value">@Model.NumberOfGuests guests</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Rooms</div>
+                    <div class="value">@Model.NumberOfRooms room(s)</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Total Price</div>
+                    <div class="value">@Model.Currency @Model.TotalPrice.ToString("N0")</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Price per Night</div>
+                    <div class="value">@Model.Currency @Model.PricePerNight.ToString("N0")</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">Payment Status</div>
+                    <div class="value">@(Model.IsPaid ? "Paid" : "Unpaid")</div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.RoomTypeName))
+                {
+                    <div class="detail-item">
+                        <div class="label">Room Type</div>
+                        <div class="value">@Model.RoomTypeName</div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                {
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="label">Special Requests</div>
+                        <div class="value">@Model.SpecialRequests</div>
+                    </div>
+                }
+                @if (Model.Status == "Cancelled" && !string.IsNullOrEmpty(Model.CancellationReason))
+                {
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="label">Cancellation Reason</div>
+                        <div class="value">@Model.CancellationReason</div>
+                    </div>
+                }
+                <div class="detail-item" style="grid-column: 1 / -1;">
+                    <div class="label">Booking Date</div>
+                    <div class="value">@Model.CreatedAt.ToString("dddd, MMMM dd, yyyy HH:mm")</div>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <a href="@Url.Action("Index", "Reservation")" class="btn-back">
+                    <i class="fa-regular fa-arrow-left"></i> Back to My Reservations
+                </a>
+                @if (Model.CanCancel)
+                {
+                    <button class="btn-cancel" onclick="openCancelModal(@Model.Id)">
+                        <i class="fa-regular fa-trash-can"></i> Cancel Reservation
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Modal -->
+    <div class="modal-overlay" id="cancelModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div class="modal-box" style="background:white; border-radius:16px; padding:32px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h3 style="font-size:20px; font-weight:700; margin-bottom:8px;">Cancel Reservation</h3>
+            <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">Are you sure you want to cancel this reservation? This action cannot be undone.</p>
+            <form asp-action="Cancel" asp-controller="Reservation" method="post" id="cancelForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="cancelReservationId" />
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label class="form-label" style="font-size:13px; font-weight:600; color:#4b5563; display:block; margin-bottom:6px;">Reason for cancellation</label>
+                    <input type="text" class="form-control" name="reason" placeholder="Why are you cancelling?" style="width:100%; padding:12px 14px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:14px;" />
+                </div>
+                <div class="modal-actions" style="display:flex; gap:12px; justify-content:flex-end; margin-top:20px;">
+                    <button type="button" class="btn-modal-cancel" onclick="closeCancelModal()" style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:8px; background:white; cursor:pointer; font-weight:600; font-size:14px;">Keep Booking</button>
+                    <button type="submit" class="btn-modal-confirm" style="padding:10px 20px; background:#dc2626; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px;">Yes, Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay.active {
+            display: flex !important;
+        }
+    </style>
+
+    <script>
+        function openCancelModal(reservationId) {
+            document.getElementById('cancelReservationId').value = reservationId;
+            document.getElementById('cancelModal').classList.add('active');
+            document.getElementById('cancelModal').style.display = 'flex';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.remove('active');
+            document.getElementById('cancelModal').style.display = 'none';
+        }
+
+        document.getElementById('cancelModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCancelModal();
+            }
+        });
+    </script>
+}
+else
+{
+    <div class="not-found">
+        <i class="fa-regular fa-calendar-xmark"></i>
+        <h2>Reservation Not Found</h2>
+        <p>The reservation you're looking for doesn't exist or you don't have permission to view it.</p>
+        <a href="@Url.Action("Index", "Reservation")" class="btn-back">Back to My Reservations</a>
+    </div>
+}

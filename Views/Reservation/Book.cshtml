@@ -1,0 +1,839 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.BookingViewModel
+
+@{
+    ViewData["Title"] = $"Book - {Model?.PropertyName ?? "Property"}";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    /* ===== Page Header Banner ===== */
+    .booking-hero {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+        padding: 50px 20px 90px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .booking-hero::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .booking-hero::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            left: -40px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+        }
+
+        .booking-hero h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .booking-hero p {
+            font-size: 15px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+    /* ===== Step Indicator ===== */
+    .steps-indicator {
+        max-width: 480px;
+        margin: 28px auto 0;
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        z-index: 2;
+    }
+
+        .steps-indicator::before {
+            content: "";
+            position: absolute;
+            top: 16px;
+            left: 30px;
+            right: 30px;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+            z-index: 0;
+        }
+
+    .step-dot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: white;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+        .step-circle.pending {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 1.5px solid rgba(255,255,255,0.5);
+        }
+
+    .step-dot span {
+        font-size: 12px;
+        opacity: 0.9;
+    }
+
+    /* ===== Main Layout ===== */
+    .booking-wrapper {
+        max-width: 1080px;
+        margin: -55px auto 60px;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 26px;
+        position: relative;
+        z-index: 5;
+    }
+
+    .card {
+        background: white;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+    }
+
+    .section-title {
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #0f172a;
+    }
+
+        .section-title i {
+            color: #2563eb;
+            font-size: 16px;
+            background: #eff6ff;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 7px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.15s;
+        background: #fafafa;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .form-control.is-valid {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+    .validation-message {
+        font-size: 12px;
+        color: #dc2626;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+    }
+
+    .btn-check {
+        padding: 13px 24px;
+        background: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 26px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.15s, background 0.15s;
+    }
+
+        .btn-check:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .btn-check:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .divider-line {
+        border: none;
+        border-top: 1.5px dashed #e5e7eb;
+        margin: 26px 0;
+    }
+
+    /* ===== Property Info ===== */
+    .property-summary {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        padding: 16px;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+        .property-summary img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .property-summary .info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .property-summary .info .location {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .property-summary .info .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+    /* ===== Room Selection ===== */
+    .room-select {
+        margin-bottom: 20px;
+    }
+
+    .room-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+        .room-option:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .room-option.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .room-option .room-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .room-option .room-details {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .room-option .room-price {
+            font-weight: 700;
+            font-size: 16px;
+            color: #2563eb;
+        }
+
+    /* ===== Time Slots ===== */
+    .slot-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .slot-pill {
+        padding: 11px 20px;
+        border-radius: 999px;
+        border: 1.5px solid #e5e7eb;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        background: white;
+        position: relative;
+    }
+
+        .slot-pill.available:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(37,99,235,0.15);
+        }
+
+        .slot-pill.selected {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+
+            .slot-pill.selected::after {
+                content: "✓";
+                margin-left: 6px;
+            }
+
+        .slot-pill.unavailable {
+            color: #c4c9d1;
+            background: #f8f9fb;
+            cursor: not-allowed;
+            text-decoration: line-through;
+            border-color: #f0f1f3;
+        }
+
+    .slots-hint {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 22px;
+    }
+
+    .btn-proceed {
+        width: 100%;
+        padding: 17px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: transform 0.15s, box-shadow 0.15s;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+    }
+
+        .btn-proceed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(37,99,235,0.35);
+        }
+
+        .btn-proceed:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+    /* ===== Right column ===== */
+    .info-card {
+        position: sticky;
+        top: 20px;
+    }
+
+    .info-card-header {
+        text-align: center;
+        padding-bottom: 18px;
+        margin-bottom: 18px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .info-card-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin: 0 auto 12px;
+    }
+
+    .info-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #0f172a;
+    }
+
+    .info-text {
+        font-size: 13.5px;
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .btn-chat-alt {
+        width: 100%;
+        padding: 14px;
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1.5px solid #bfdbfe;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.15s;
+    }
+
+        .btn-chat-alt:hover {
+            background: #dbeafe;
+            transform: translateY(-1px);
+        }
+
+    .info-divider {
+        border: none;
+        border-top: 1.5px solid #f0f0f0;
+        margin: 22px 0;
+    }
+
+    .perk-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .perk-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 13px;
+        color: #4b5563;
+    }
+
+        .perk-item i {
+            color: #16a34a;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+    /* ===== Toast Messages ===== */
+    .toast-error {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    /* ===== Responsive ===== */
+    @@media (max-width: 900px) {
+        .booking-wrapper {
+            grid-template-columns: 1fr;
+            margin-top: -30px;
+        }
+
+        .row, .row-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-hero {
+            padding: 40px 16px 110px;
+        }
+
+        .property-summary {
+            flex-direction: column;
+            text-align: center;
+        }
+
+            .property-summary img {
+                width: 100%;
+                height: 150px;
+            }
+
+        .room-option {
+            flex-direction: column;
+            text-align: center;
+            gap: 8px;
+        }
+    }
+</style>
+
+<!-- ===== Hero / Header ===== -->
+<section class="booking-hero">
+    <h1>Book Your Stay</h1>
+    <p>Complete your booking at @Model?.PropertyName</p>
+
+    <div class="steps-indicator">
+        <div class="step-dot">
+            <div class="step-circle">1</div>
+            <span>Select Dates</span>
+        </div>
+        <div class="step-dot">
+            <div class="step-circle">2</div>
+            <span>Choose Room</span>
+        </div>
+        <div class="step-dot">
+            <div class="step-circle pending">3</div>
+            <span>Confirm Booking</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Main Booking Layout ===== -->
+<div class="booking-wrapper">
+    <!-- Left: Booking Form -->
+    <div class="card">
+        <!-- Property Summary -->
+        @if (Model != null)
+        {
+            <div class="property-summary">
+                <img src="@(Model.PropertyImage ?? "/images/default-property.jpg")" alt="@Model.PropertyName" />
+                <div class="info">
+                    <h4>@Model.PropertyName</h4>
+                    <div class="location">📍 @Model.PropertyLocation</div>
+                    <div class="price">@Model.PricePerNight.ToString("C") / night</div>
+                </div>
+            </div>
+
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="toast-error">
+                    <strong>Please fix the following errors:</strong>
+                    <ul style="margin: 8px 0 0 20px; font-size: 14px;">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <form asp-action="Book" asp-controller="Reservation" method="post" id="bookingForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="PropertyId" />
+                <input type="hidden" asp-for="PropertyName" />
+                <input type="hidden" asp-for="PropertyImage" />
+                <input type="hidden" asp-for="PropertyType" />
+                <input type="hidden" asp-for="PropertyLocation" />
+                <input type="hidden" asp-for="PricePerNight" />
+
+                <h2 class="section-title"><i class="fa-regular fa-calendar"></i> When would you like to stay?</h2>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label">Check-In Date <span style="color:#dc2626">*</span></label>
+                        <input type="date" class="form-control" asp-for="CheckInDate" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="CheckInDate" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Check-Out Date <span style="color:#dc2626">*</span></label>
+                        <input type="date" class="form-control" asp-for="CheckOutDate" required min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="CheckOutDate" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label">Number of Guests <span style="color:#dc2626">*</span></label>
+                        <select class="form-control" asp-for="NumberOfGuests">
+                            @for (int i = 1; i <= 10; i++)
+                            {
+                                <option value="@i">@i @(i == 1 ? "Guest" : "Guests")</option>
+                            }
+                        </select>
+                        <span asp-validation-for="NumberOfGuests" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Rooms <span style="color:#dc2626">*</span></label>
+                        <select class="form-control" asp-for="NumberOfRooms">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <option value="@i">@i @(i == 1 ? "Room" : "Rooms")</option>
+                            }
+                        </select>
+                        <span asp-validation-for="NumberOfRooms" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <hr class="divider-line" />
+
+                <h2 class="section-title"><i class="fa-regular fa-bed"></i> Select Room Type</h2>
+
+                @if (Model.RoomTypes != null && Model.RoomTypes.Any())
+                {
+                    <div class="room-select">
+                        @foreach (var room in Model.RoomTypes)
+                        {
+                            <div class="room-option" onclick="selectRoom(this, '@room.Value')">
+                                <div>
+                                    <div class="room-name">@room.Text</div>
+                                    <div class="room-details">Max @room.Text.Split('-').Last().Trim() guests</div>
+                                </div>
+                                <div class="room-price">@room.Text.Split('$').Last().Split('/').First().Trim()</div>
+                            </div>
+                        }
+                    </div>
+                    <input type="hidden" asp-for="SelectedRoomTypeId" id="selectedRoomType" />
+                    <span asp-validation-for="SelectedRoomTypeId" class="validation-message"></span>
+                }
+                else
+                {
+                    <p style="color: #6b7280;">No room types available for this property.</p>
+                }
+
+                <hr class="divider-line" />
+
+                <h2 class="section-title"><i class="fa-regular fa-user"></i> Your Details</h2>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span style="color:#dc2626">*</span></label>
+                        <input type="text" class="form-control" asp-for="FullName" placeholder="Enter your full name" required />
+                        <span asp-validation-for="FullName" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email <span style="color:#dc2626">*</span></label>
+                        <input type="email" class="form-control" asp-for="Email" placeholder="Enter your email" required />
+                        <span asp-validation-for="Email" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label">Phone Number <span style="color:#dc2626">*</span></label>
+                        <input type="tel" class="form-control" asp-for="PhoneNumber" placeholder="Enter phone number" required />
+                        <span asp-validation-for="PhoneNumber" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <input type="text" class="form-control" asp-for="Country" placeholder="Your country" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Special Requests</label>
+                    <input type="text" class="form-control" asp-for="SpecialRequests" placeholder="Any special requests?" />
+                </div>
+
+                <!-- Total Price Display -->
+                <div style="background: #f8fafc; padding: 16px 20px; border-radius: 12px; margin: 16px 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6b7280;">
+                        <span>@(Model.PricePerNight.ToString("C")) x <span id="nightCount">2</span> nights</span>
+                        <span id="subtotal">@((Model.PricePerNight * 2).ToString("C"))</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; color: #0f172a; border-top: 1px solid #e5e7eb; padding-top: 12px; margin-top: 8px;">
+                        <span>Total</span>
+                        <span id="totalPrice">@((Model.PricePerNight * 2).ToString("C"))</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-proceed" id="confirmBtn">
+                    <i class="fa-regular fa-calendar-check"></i> Confirm Booking
+                </button>
+            </form>
+        }
+        else
+        {
+            <div style="text-align: center; padding: 40px 20px;">
+                <h3>Property not found</h3>
+                <p>The property you're trying to book doesn't exist.</p>
+                <a href="@Url.Action("Index", "Properties")" class="btn-check">Browse Properties</a>
+            </div>
+        }
+    </div>
+
+    <!-- Right: Info / Chat prompt -->
+    <div class="card info-card">
+        <div class="info-card-header">
+            <div class="info-card-icon"><i class="fa-solid fa-robot"></i></div>
+            <h3>Need help?</h3>
+        </div>
+        <p class="info-text">
+            Our AI assistant can help you find the perfect room and answer any questions.
+        </p>
+        <a href="@Url.Action("Index", "Chat")" class="btn-chat-alt">
+            <i class="fa-solid fa-comments"></i> Chat with Assistant
+        </a>
+
+        <hr class="info-divider" />
+
+        <div class="perk-list">
+            <div class="perk-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Instant confirmation — no waiting.</span>
+            </div>
+            <div class="perk-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Free cancellation up to 24 hours before check-in.</span>
+            </div>
+            <div class="perk-item">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Manage bookings anytime from "My Reservations".</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Calculate total price when dates change
+    document.querySelectorAll('#CheckInDate, #CheckOutDate').forEach(input => {
+        input.addEventListener('change', calculateTotal);
+        input.addEventListener('input', calculateTotal);
+    });
+
+    document.querySelector('#NumberOfGuests')?.addEventListener('change', calculateTotal);
+    document.querySelector('#NumberOfRooms')?.addEventListener('change', calculateTotal);
+
+    function calculateTotal() {
+        const checkIn = new Date(document.getElementById('CheckInDate')?.value);
+        const checkOut = new Date(document.getElementById('CheckOutDate')?.value);
+        const pricePerNight = @(Model?.PricePerNight ?? 0);
+
+        if (checkIn && checkOut && checkOut > checkIn && pricePerNight > 0) {
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const total = pricePerNight * nights;
+
+            document.getElementById('nightCount').textContent = nights;
+            document.getElementById('subtotal').textContent = total.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            });
+            document.getElementById('totalPrice').textContent = total.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            });
+        }
+    }
+
+    // Room selection
+    function selectRoom(element, roomTypeId) {
+        document.querySelectorAll('.room-option').forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('SelectedRoomTypeId').value = roomTypeId;
+    }
+
+    // Select first room by default
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstRoom = document.querySelector('.room-option');
+        if (firstRoom) {
+            firstRoom.classList.add('selected');
+            const roomId = firstRoom.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+            if (roomId) {
+                document.getElementById('SelectedRoomTypeId').value = roomId;
+            }
+        }
+        calculateTotal();
+    });
+
+    // Form validation
+    document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
+        const selectedRoom = document.getElementById('SelectedRoomTypeId').value;
+        if (!selectedRoom) {
+            e.preventDefault();
+            alert('Please select a room type.');
+            return false;
+        }
+        return true;
+    });
+
+    // Date validation
+    document.getElementById('CheckInDate')?.addEventListener('change', function() {
+        const checkOut = document.getElementById('CheckOutDate');
+        if (checkOut && checkOut.value && checkOut.value <= this.value) {
+            const nextDay = new Date(this.value);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkOut.value = nextDay.toISOString().split('T')[0];
+        }
+        if (checkOut) {
+            checkOut.min = this.value;
+        }
+    });
+</script>

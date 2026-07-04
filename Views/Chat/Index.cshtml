@@ -1,0 +1,526 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "AI Reservation Assistant";
+}
+
+<style>
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .chat-window {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        overflow: hidden;
+        height: 600px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        padding: 20px 25px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 25px;
+        background: #f8f9fa;
+    }
+
+    .message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+    .message-bubble {
+        max-width: 75%;
+        padding: 12px 18px;
+        border-radius: 15px;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    .message.bot .message-bubble {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-bottom-left-radius: 5px;
+    }
+
+    .message.user .message-bubble {
+        background: #ffc107;
+        color: #1a1a1a;
+        border-bottom-right-radius: 5px;
+    }
+
+    .message-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin: 0 10px;
+    }
+
+    .message.bot .message-avatar {
+        background: #e5e7eb;
+        color: #1a1a1a;
+    }
+
+    .message.user .message-avatar {
+        background: #ffc107;
+        color: #1a1a1a;
+    }
+
+    .chat-input {
+        padding: 20px 25px;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        flex-shrink: 0;
+    }
+
+        .chat-input .input-group {
+            border-radius: 50px;
+            overflow: hidden;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+            .chat-input .input-group:focus-within {
+                border-color: #ffc107;
+                box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25);
+            }
+
+        .chat-input input {
+            border: none;
+            padding: 12px 20px;
+            font-size: 15px;
+        }
+
+            .chat-input input:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
+        .chat-input button {
+            border: none;
+            padding: 12px 25px;
+            background: #ffc107;
+            color: #1a1a1a;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .chat-input button:hover {
+                background: #e6a800;
+            }
+
+    .typing-indicator {
+        display: none;
+        padding: 10px 0;
+    }
+
+        .typing-indicator .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #6c757d;
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: typing 1.4s infinite both;
+        }
+
+            .typing-indicator .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .typing-indicator .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+    @@keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+
+        30% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+        .quick-actions .btn {
+            border-radius: 50px;
+            font-size: 13px;
+            padding: 5px 15px;
+            border: 1px solid #e5e7eb;
+            color: #4b5563;
+            transition: all 0.2s ease;
+        }
+
+            .quick-actions .btn:hover {
+                background: #ffc107;
+                border-color: #ffc107;
+                color: #1a1a1a;
+            }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 13px;
+        padding: 5px 10px;
+        background: #f8d7da;
+        border-radius: 5px;
+        display: none;
+        margin: 10px 25px 0;
+    }
+
+    .message-bubble ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+    }
+
+    .message-bubble p {
+        margin-bottom: 4px;
+    }
+
+    .status-indicator {
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .status-indicator .dot-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-indicator .online {
+            background: #22c55e;
+        }
+
+        .status-indicator .offline {
+            background: #ef4444;
+        }
+
+        .status-indicator .connecting {
+            background: #f59e0b;
+            animation: pulse 1s infinite;
+        }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.3;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="chat-container">
+        <div class="chat-window">
+            <!-- Header -->
+            <div class="chat-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning rounded-circle p-2 me-3">
+                        <i class="fas fa-robot text-dark"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">AI Reservation Assistant</h5>
+                        <div class="status-indicator">
+                            <span class="dot-status connecting" id="statusDot"></span>
+                            <span id="statusText" style="color: rgba(255,255,255,0.8);">Connecting...</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span class="badge bg-warning text-dark">Powered by AI</span>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                <span id="errorText">Connection error. Please refresh the page.</span>
+            </div>
+
+            <!-- Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome Message -->
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-bubble">
+                        <p class="mb-0">👋 Hello! I'm your AI reservation assistant at BookingBot.</p>
+                        <p class="mb-0 mt-1">I can help you:</p>
+                        <ul class="mb-0 mt-1">
+                            <li>Check property availability</li>
+                            <li>Make a reservation</li>
+                            <li>Answer questions about properties</li>
+                        </ul>
+                        <div class="quick-actions">
+                            <button class="btn btn-sm" onclick="sendQuickMessage('Suggest a hotel for me')">
+                                🏨 Find Hotels
+                            </button>
+                            <button class="btn btn-sm" onclick="sendQuickMessage('Check availability for this weekend')">
+                                🔍 Check Availability
+                            </button>
+                            <button class="btn btn-sm" onclick="sendQuickMessage('Book a room for 2 people')">
+                                📅 Book Room
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="d-flex align-items-center">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-bubble">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="chat-input">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="messageInput"
+                           placeholder="Type your message..."
+                           onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button class="btn" onclick="sendMessage()" id="sendBtn">
+                        <i class="fas fa-paper-plane me-1"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ SignalR Script - MUST BE BEFORE THE JAVASCRIPT -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.13/signalr.min.js">
+</script>
+
+<script>
+    // ✅ Check if signalR is loaded
+    if (typeof signalR === 'undefined') {
+        console.error('SignalR library not loaded!');
+        document.getElementById('statusText').textContent = 'Error: SignalR not loaded';
+        document.getElementById('statusDot').className = 'dot-status offline';
+    } else {
+        console.log('SignalR loaded successfully!');
+    }
+
+    // SignalR Connection
+    let connection;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+
+    function initializeConnection() {
+        // ✅ Double check signalR is defined
+        if (typeof signalR === 'undefined') {
+            console.error('Cannot initialize: signalR is not defined');
+            return;
+        }
+
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chathub")
+            .configureLogging(signalR.LogLevel.Information)
+            .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+            .build();
+
+        // Receive message from bot
+        connection.on("ReceiveMessage", (message) => {
+            hideTyping();
+            appendMessage("bot", message);
+        });
+
+        // Connection events
+        connection.onclose(async (error) => {
+            updateStatus("Disconnected", "offline");
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                await startConnection();
+            } else {
+                showError("Unable to connect to chat service. Please refresh the page.");
+            }
+        });
+
+        connection.onreconnecting((error) => {
+            updateStatus("Reconnecting...", "connecting");
+            showError("Connection lost. Attempting to reconnect...");
+        });
+
+        connection.onreconnected((connectionId) => {
+            updateStatus("Online", "online");
+            hideError();
+            reconnectAttempts = 0;
+            appendMessage("bot", "🔄 I'm back online! How can I help you?");
+        });
+
+        return connection;
+    }
+
+    async function startConnection() {
+        try {
+            await connection.start();
+            updateStatus("Online", "online");
+            hideError();
+            reconnectAttempts = 0;
+            console.log("SignalR connected successfully");
+        } catch (err) {
+            console.error("SignalR connection error:", err);
+            updateStatus("Offline", "offline");
+            showError("Cannot connect to chat service. Please check your connection.");
+        }
+    }
+
+    function updateStatus(text, type) {
+        const statusText = document.getElementById("statusText");
+        const statusDot = document.getElementById("statusDot");
+        if (statusText) {
+            statusText.textContent = text;
+        }
+        if (statusDot) {
+            statusDot.className = "dot-status " + type;
+        }
+    }
+
+    function showError(message) {
+        const errorContainer = document.getElementById("errorMessage");
+        const errorText = document.getElementById("errorText");
+        if (errorContainer && errorText) {
+            errorContainer.style.display = "block";
+            errorText.textContent = message;
+        }
+    }
+
+    function hideError() {
+        const errorContainer = document.getElementById("errorMessage");
+        if (errorContainer) {
+            errorContainer.style.display = "none";
+        }
+    }
+
+    // Send message function
+    function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
+            showError("Connection lost. Please wait while we reconnect...");
+            return;
+        }
+
+        const sendBtn = document.getElementById("sendBtn");
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>';
+
+        appendMessage("user", message);
+        showTyping();
+
+        connection.invoke("SendMessage", message)
+            .catch(err => {
+                console.error("Send error:", err);
+                hideTyping();
+                showError("Failed to send message. Please try again.");
+                appendMessage("bot", "❌ I'm having trouble processing your message. Please try again.");
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send';
+            });
+
+        input.value = "";
+    }
+
+    // Quick message function
+    function sendQuickMessage(message) {
+        document.getElementById("messageInput").value = message;
+        sendMessage();
+    }
+
+    // Append message to chat
+    function appendMessage(sender, message) {
+        const container = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${sender}`;
+
+        const avatar = document.createElement("div");
+        avatar.className = "message-avatar";
+        avatar.innerHTML = sender === "bot" ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+        bubble.innerHTML = message.replace(/\n/g, '<br>');
+
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(bubble);
+        container.appendChild(messageDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // Show typing indicator
+    function showTyping() {
+        document.getElementById("typingIndicator").style.display = "block";
+        document.getElementById("chatMessages").scrollTop = document.getElementById("chatMessages").scrollHeight;
+    }
+
+    // Hide typing indicator
+    function hideTyping() {
+        document.getElementById("typingIndicator").style.display = "none";
+    }
+
+    // ✅ Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing SignalR...');
+        if (typeof signalR !== 'undefined') {
+            initializeConnection();
+            startConnection();
+            document.getElementById("messageInput").focus();
+        } else {
+            console.error('SignalR is not defined on DOMContentLoaded!');
+            document.getElementById('statusText').textContent = 'SignalR library not loaded!';
+            document.getElementById('statusDot').className = 'dot-status offline';
+        }
+    });
+
+    // Handle page visibility change
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && connection && connection.state !== signalR.HubConnectionState.Connected) {
+            console.log("Page visible again, reconnecting...");
+            startConnection();
+        }
+    });
+</script>

@@ -1,0 +1,690 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    var featuredProperties = ViewBag.FeaturedProperties as IEnumerable<Hotel_Booking_System.Models.ViewModels.PropertyViewModel> ?? new List<Hotel_Booking_System.Models.ViewModels.PropertyViewModel>();
+    var topRatedProperties = ViewBag.TopRatedProperties as IEnumerable<Hotel_Booking_System.Models.ViewModels.PropertyViewModel> ?? new List<Hotel_Booking_System.Models.ViewModels.PropertyViewModel>();
+    var recentReviews = ViewBag.RecentReviews as IEnumerable<Hotel_Booking_System.Models.ViewModels.ReviewViewModel> ?? new List<Hotel_Booking_System.Models.ViewModels.ReviewViewModel>();
+}
+
+<style>
+    /* ===== Hero Section ===== */
+    .hero {
+        position: relative;
+        height: 480px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        padding: 0 20px;
+    }
+
+        .hero h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+        }
+
+        .hero p {
+            font-size: 17px;
+            opacity: 0.95;
+            max-width: 520px;
+        }
+
+    /* ===== Floating Search Card ===== */
+    .search-card {
+        max-width: 1000px;
+        margin: -46px auto 0;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        padding: 24px 28px;
+        position: relative;
+        z-index: 5;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .search-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 6px;
+    }
+
+    .search-field .form-control {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+        .search-field .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+    .btn-search {
+        padding: 13px 26px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-search:hover {
+            background: #1d4ed8;
+        }
+
+    /* ===== Section Wrapper ===== */
+    .section-wrapper {
+        max-width: 1100px;
+        margin: 70px auto;
+        padding: 0 20px;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .section-heading h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .section-heading a {
+            font-size: 14px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .section-heading a:hover {
+                text-decoration: underline;
+            }
+
+    /* ===== Property Grid ===== */
+    .property-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .property-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+        }
+
+    .property-img {
+        height: 170px;
+        width: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .property-info {
+        padding: 18px;
+    }
+
+    .property-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 6px;
+        gap: 8px;
+    }
+
+    .property-info h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+    }
+
+    .property-type-badge {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+
+    .property-meta {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+        .property-meta .price {
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+    .property-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #f59e0b;
+    }
+
+    .availability-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .time-pill {
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #eff6ff;
+        color: #2563eb;
+        border-radius: 8px;
+    }
+
+    /* ===== Reviews Section ===== */
+    .reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .review-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+        .review-card .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .review-card .review-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .review-card .review-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .review-card .review-date {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .review-card .review-stars {
+            color: #f59e0b;
+            font-size: 14px;
+        }
+
+        .review-card .review-text {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+    /* ===== How It Works ===== */
+    .how-it-works {
+        background: #f1f5f9;
+        padding: 70px 20px;
+    }
+
+    .how-it-works-inner {
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .how-it-works h2 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 40px;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+
+    .step-item .step-number {
+        width: 48px;
+        height: 48px;
+        background: #2563eb;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+        margin: 0 auto 16px;
+    }
+
+    .step-item h4 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .step-item p {
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.5;
+    }
+
+    /* ===== AI Assistant Banner ===== */
+    .ai-banner {
+        max-width: 1100px;
+        margin: 70px auto;
+        padding: 0 20px;
+    }
+
+    .ai-banner-card {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border-radius: 20px;
+        padding: 44px 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .ai-banner-text h3 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .ai-banner-text p {
+        font-size: 14px;
+        opacity: 0.9;
+        max-width: 420px;
+    }
+
+    .btn-ai {
+        padding: 14px 26px;
+        background: white;
+        color: #2563eb;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .btn-ai:hover {
+            background: #f0f4ff;
+            color: #1d4ed8;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7280;
+        background: #f9fafb;
+        border-radius: 16px;
+    }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state .btn-primary {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #2563eb;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+            .empty-state .btn-primary:hover {
+                background: #1d4ed8;
+            }
+
+    /* ===== Responsive ===== */
+    @@media (max-width: 992px) {
+        .search-card {
+            grid-template-columns: 1fr 1fr;
+            margin: -30px 16px 0;
+        }
+
+        .property-grid, .reviews-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero h1 {
+            font-size: 30px;
+        }
+
+        .ai-banner-card {
+            padding: 30px 24px;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .ai-banner-text p {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .search-card {
+            grid-template-columns: 1fr;
+        }
+
+        .property-grid, .reviews-grid, .steps-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-heading {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero {
+            height: 350px;
+        }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+    }
+</style>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+    <h1>Find your perfect stay or dining experience</h1>
+    <p>Search live availability across hotels, apartments, and restaurants — or just tell our AI assistant what you're looking for.</p>
+</section>
+
+<!-- ===== Floating Search Card ===== -->
+<form class="search-card" asp-controller="Properties" asp-action="Search" method="get">
+    <div class="search-field">
+        <label>Location / Property</label>
+        <input type="text" class="form-control" name="location" placeholder="City or property name" />
+    </div>
+    <div class="search-field">
+        <label>Property Type</label>
+        <select class="form-control" name="type">
+            <option value="">All Types</option>
+            <option value="Hotel">Hotel</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Resort">Resort</option>
+            <option value="Lodge">Lodge</option>
+        </select>
+    </div>
+    <div class="search-field">
+        <label>Guests</label>
+        <select class="form-control" name="guests">
+            @for (int i = 1; i <= 10; i++)
+            {
+                <option value="@i">@i @(i == 1 ? "Guest" : "Guests")</option>
+            }
+        </select>
+    </div>
+    <div class="search-field">
+        <label>&nbsp;</label>
+        <button type="submit" class="btn-search" style="width:100%; justify-content:center;">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+    </div>
+</form>
+
+<!-- ===== Featured Properties ===== -->
+<section class="section-wrapper">
+    <div class="section-heading">
+        <h2>Featured Properties</h2>
+        <a href="@Url.Action("Index", "Properties")">View all &rarr;</a>
+    </div>
+
+    @if (featuredProperties.Any())
+    {
+        <div class="property-grid">
+            @foreach (var property in featuredProperties)
+            {
+                <a href="@Url.Action("Details", "Properties", new { id = property.Id })" class="property-card">
+                    <img src="@(property.ImageUrl ?? "/images/default-property.jpg")" class="property-img" alt="@property.Name" />
+                    <div class="property-info">
+                        <div class="property-top-row">
+                            <h3>@property.Name</h3>
+                            <span class="property-type-badge">@property.Type</span>
+                        </div>
+                        <div class="property-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> @property.Location</span>
+                            <span class="price">@property.Price</span>
+                            <span class="property-rating">
+                                <i class="fa-solid fa-star"></i> @property.Rating
+                            </span>
+                        </div>
+                        <div class="availability-pills">
+                            <span class="time-pill"><i class="fa-regular fa-clock"></i> Min @property.MinNights nights</span>
+                            <span class="time-pill"><i class="fa-regular fa-user"></i> @property.MaxGuests guests</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fa-regular fa-building"></i>
+            <h4>No featured properties yet</h4>
+            <p>Be the first to add a property! Click below to get started.</p>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="@Url.Action("Create", "Properties")" class="btn-primary">
+                    <i class="fa-solid fa-plus"></i> Add Your First Property
+                </a>
+            }
+            else
+            {
+                <p style="font-size: 13px; color: #9ca3af;">Check back soon for new listings!</p>
+            }
+        </div>
+    }
+</section>
+
+<!-- ===== Top Rated Properties ===== -->
+@if (topRatedProperties.Any())
+{
+    <section class="section-wrapper" style="margin-top: 40px;">
+        <div class="section-heading">
+            <h2>Top Rated Properties</h2>
+            <a href="@Url.Action("TopRated", "Properties")">View all &rarr;</a>
+        </div>
+        <div class="property-grid">
+            @foreach (var property in topRatedProperties.Take(4))
+            {
+                <a href="@Url.Action("Details", "Properties", new { id = property.Id })" class="property-card">
+                    <img src="@(property.ImageUrl ?? "/images/default-property.jpg")" class="property-img" alt="@property.Name" />
+                    <div class="property-info">
+                        <div class="property-top-row">
+                            <h3>@property.Name</h3>
+                            <span class="property-type-badge">@property.Type</span>
+                        </div>
+                        <div class="property-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> @property.Location</span>
+                            <span class="price">@property.Price</span>
+                            <span class="property-rating">
+                                <i class="fa-solid fa-star"></i> @property.Rating
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+}
+
+<!-- ===== Recent Reviews ===== -->
+@if (recentReviews.Any())
+{
+    <section class="section-wrapper" style="margin-top: 40px;">
+        <div class="section-heading">
+            <h2>Recent Reviews</h2>
+        </div>
+        <div class="reviews-grid">
+            @foreach (var review in recentReviews.Take(3))
+            {
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-avatar">@(review.UserName?.FirstOrDefault() ?? 'U')</div>
+                        <div>
+                            <div class="review-name">@review.UserName</div>
+                            <div class="review-date">@review.Date</div>
+                        </div>
+                    </div>
+                    <div class="review-stars">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= review.Rating)
+                            {
+                                <i class="fa-solid fa-star"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-regular fa-star"></i>
+                            }
+                        }
+                    </div>
+                    <div class="review-text">"@review.Comment"</div>
+                    @if (!string.IsNullOrEmpty(review.Country))
+                    {
+                        <div style="margin-top: 8px; font-size: 12px; color: #9ca3af;">
+                            <i class="fa-solid fa-globe"></i> @review.Country
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<!-- ===== AI Assistant Banner ===== -->
+<section class="ai-banner">
+    <div class="ai-banner-card">
+        <div class="ai-banner-text">
+            <h3>Skip the search — just ask</h3>
+            <p>Tell our AI assistant what you need, like "hotel room for 2 tomorrow near the beach" or "dinner table for 4 at 8pm" and it'll find and book it for you.</p>
+        </div>
+        <a href="@Url.Action("Index", "Chat")" class="btn-ai">
+            <i class="fa-solid fa-comments"></i> Chat with Assistant
+        </a>
+    </div>
+</section>
+
+<!-- ===== How It Works ===== -->
+<section class="how-it-works">
+    <div class="how-it-works-inner">
+        <h2>How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <h4>Search or Chat</h4>
+                <p>Pick a date, time, and guest count — or just tell our assistant what you want.</p>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <h4>Pick a Property</h4>
+                <p>We check live availability across hotels, apartments, and restaurants so what you see is what you get.</p>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <h4>Instant Confirmation</h4>
+                <p>Your booking is confirmed immediately and saved to your account — no calls, no waiting.</p>
+            </div>
+        </div>
+    </div>
+</section>

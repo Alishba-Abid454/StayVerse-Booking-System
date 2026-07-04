@@ -1,0 +1,654 @@
+﻿@model IEnumerable<Hotel_Booking_System.Models.ViewModels.ReservationViewModel>
+
+@{
+    ViewData["Title"] = "My Reservations";
+    var reservations = Model ?? new List<Hotel_Booking_System.Models.ViewModels.ReservationViewModel>();
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    /* ===== Header Banner ===== */
+    .res-hero {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+        padding: 46px 20px 80px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .res-hero::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .res-hero h1 {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .res-hero p {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+    .reservations-wrapper {
+        max-width: 880px;
+        margin: -50px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* ===== Summary Strip ===== */
+    .summary-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .summary-pill {
+        background: white;
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 8px 24px rgba(15,23,42,0.07);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .summary-pill-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+
+    .icon-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .icon-green {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .icon-amber {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .icon-red {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .summary-pill-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .summary-pill-label {
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    /* ===== Page Header ===== */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .page-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+    .btn-new {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 6px 16px rgba(37,99,235,0.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.15s;
+    }
+
+        .btn-new:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    /* ===== Reservation Card ===== */
+    .reservation-card {
+        background: white;
+        border-radius: 16px;
+        padding: 22px 26px;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid transparent;
+        transition: transform 0.15s, box-shadow 0.15s;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+        .reservation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(15,23,42,0.1);
+        }
+
+        .reservation-card.status-Confirmed {
+            border-left-color: #16a34a;
+        }
+
+        .reservation-card.status-Pending {
+            border-left-color: #d97706;
+        }
+
+        .reservation-card.status-CheckedIn {
+            border-left-color: #2563eb;
+        }
+
+        .reservation-card.status-CheckedOut {
+            border-left-color: #6b7280;
+        }
+
+        .reservation-card.status-Cancelled {
+            border-left-color: #dc2626;
+            opacity: 0.75;
+        }
+
+    .reservation-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .reservation-date-block {
+        width: 64px;
+        height: 56px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-align: center;
+    }
+
+        .reservation-date-block .day {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1;
+        }
+
+        .reservation-date-block .month {
+            font-size: 10.5px;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+    .reservation-details h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #0f172a;
+    }
+
+    .reservation-meta {
+        font-size: 13px;
+        color: #6b7280;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+        .reservation-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+    .reservation-number {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 4px;
+    }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .status-Confirmed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-Pending {
+        background: #fef9c3;
+        color: #a16207;
+    }
+
+    .status-CheckedIn {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-CheckedOut {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .status-Cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .reservation-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .reservation-price {
+        text-align: right;
+        margin-right: 6px;
+    }
+
+        .reservation-price .amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .reservation-price .nights {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        border: 1.5px solid #e5e7eb;
+        background: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #4b5563;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+        .btn-icon:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .btn-icon.danger:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+    /* Cancel Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+    .modal-box {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+        .modal-box h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-box p {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .modal-box .form-group {
+            margin-bottom: 16px;
+        }
+
+        .modal-box .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .modal-box .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+            .modal-box .form-control:focus {
+                outline: none;
+                border-color: #2563eb;
+            }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .btn-modal-cancel {
+        padding: 10px 20px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-modal-confirm {
+        padding: 10px 20px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+        .btn-modal-confirm:hover {
+            background: #b91c1c;
+        }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        text-align: center;
+        padding: 70px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+        color: #6b7280;
+    }
+
+    .empty-state-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 18px;
+    }
+
+    .empty-state p {
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    .empty-state span {
+        font-size: 13px;
+        color: #9ca3af;
+    }
+
+    /* ===== Toast Messages ===== */
+    .toast {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .toast-success {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+    }
+
+    .toast-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+    }
+
+    @@media (max-width: 768px) {
+        .summary-strip {
+            grid-template-columns: 1fr;
+        }
+
+        .reservation-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .reservation-left {
+            flex-wrap: wrap;
+        }
+
+        .reservation-price {
+            text-align: left;
+        }
+    }
+</style>
+
+<!-- ===== Hero ===== -->
+<section class="res-hero">
+    <h1>My Reservations</h1>
+    <p>Track, modify, or cancel your upcoming bookings</p>
+</section>
+
+<div class="reservations-wrapper">
+    <!-- Toast Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast toast-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="toast toast-error">@TempData["Error"]</div>
+    }
+
+    <!-- Summary Strip -->
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <div class="summary-pill-icon icon-blue"><i class="fa-regular fa-calendar"></i></div>
+            <div>
+                <div class="summary-pill-value">@reservations.Count()</div>
+                <div class="summary-pill-label">Total Reservations</div>
+            </div>
+        </div>
+        <div class="summary-pill">
+            <div class="summary-pill-icon icon-green"><i class="fa-regular fa-circle-check"></i></div>
+            <div>
+                <div class="summary-pill-value">@reservations.Count(r => r.Status == "Confirmed")</div>
+                <div class="summary-pill-label">Confirmed</div>
+            </div>
+        </div>
+        <div class="summary-pill">
+            <div class="summary-pill-icon icon-amber"><i class="fa-regular fa-clock"></i></div>
+            <div>
+                <div class="summary-pill-value">@reservations.Count(r => r.Status == "Pending")</div>
+                <div class="summary-pill-label">Pending</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <h2>Your Bookings</h2>
+        <a href="@Url.Action("Book", "Reservation", new { propertyId = 1 })" class="btn-new">
+            <i class="fa-solid fa-plus"></i> New Reservation
+        </a>
+    </div>
+
+    @if (reservations.Any())
+    {
+        @foreach (var r in reservations)
+        {
+            var nights = (r.CheckOutDate - r.CheckInDate).Days;
+            var statusClass = r.Status ?? "Pending";
+
+            <div class="reservation-card status-@statusClass" id="reservation-@r.Id">
+                <div class="reservation-left">
+                    <div class="reservation-date-block">
+                        <div class="day">@r.CheckInDate.Day</div>
+                        <div class="month">@r.CheckInDate.ToString("MMM")</div>
+                    </div>
+                    <div class="reservation-details">
+                        <h4>@(r.PropertyName ?? "Property")</h4>
+                        <div class="reservation-meta">
+                            <span><i class="fa-regular fa-calendar"></i> @r.CheckInDate.ToString("MMM dd") &rarr; @r.CheckOutDate.ToString("MMM dd, yyyy")</span>
+                            <span><i class="fa-regular fa-user"></i> @r.NumberOfGuests Guests</span>
+                            <span><i class="fa-solid fa-door-closed"></i> @r.NumberOfRooms Room(s)</span>
+                        </div>
+                        <div class="reservation-number">Booking #@r.ReservationNumber</div>
+                    </div>
+                </div>
+                <div class="reservation-actions">
+                    <div class="reservation-price">
+                        <div class="amount">@r.Currency @r.TotalPrice.ToString("N0")</div>
+                        <div class="nights">@nights night@(nights == 1 ? "" : "s")</div>
+                    </div>
+                    <span class="status-badge status-@statusClass">@r.Status</span>
+                    <a href="@Url.Action("Details", "Reservation", new { id = r.Id })" class="btn-icon" title="View Details">
+                        <i class="fa-regular fa-eye"></i>
+                    </a>
+                    @if (r.CanCancel)
+                    {
+                        <button class="btn-icon danger" title="Cancel" onclick="openCancelModal(@r.Id)">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="fa-regular fa-calendar-xmark"></i></div>
+            <p>You don't have any reservations yet.</p>
+            <span>Once you book a stay, it'll show up here.</span>
+            <div style="margin-top:20px;">
+                <a href="@Url.Action("Book", "Reservation", new { propertyId = 1 })" class="btn-new">Book Your First Stay</a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal-overlay" id="cancelModal">
+    <div class="modal-box">
+        <h3>Cancel Reservation</h3>
+        <p>Are you sure you want to cancel this reservation? This action cannot be undone.</p>
+        <form asp-action="Cancel" asp-controller="Reservation" method="post" id="cancelForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="cancelReservationId" />
+            <div class="form-group">
+                <label class="form-label">Reason for cancellation</label>
+                <input type="text" class="form-control" name="reason" placeholder="Why are you cancelling?" />
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeCancelModal()">Keep Booking</button>
+                <button type="submit" class="btn-modal-confirm">Yes, Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openCancelModal(reservationId) {
+        document.getElementById('cancelReservationId').value = reservationId;
+        document.getElementById('cancelModal').classList.add('active');
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelModal').classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('cancelModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCancelModal();
+        }
+    });
+</script>

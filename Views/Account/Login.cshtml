@@ -1,0 +1,348 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Log In";
+    Layout = "_Layout";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    .auth-page {
+        max-width: 920px;
+        margin: 50px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 16px 40px rgba(15,23,42,0.1);
+    }
+
+    /* ===== Left gradient panel ===== */
+    .auth-side {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+        color: white;
+        padding: 50px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .auth-side::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .auth-side::after {
+            content: "";
+            position: absolute;
+            bottom: -70px;
+            left: -50px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+        }
+
+    .auth-side-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 22px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-side h2 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-side p {
+        font-size: 14px;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-perk {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 2;
+    }
+
+        .auth-perk i {
+            color: #bbf7d0;
+        }
+
+    /* ===== Right form panel ===== */
+    .auth-form-panel {
+        background: white;
+        padding: 50px 44px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #0f172a;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 28px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 7px;
+    }
+
+    .input-wrap {
+        position: relative;
+    }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px 12px 40px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        background: #fafafa;
+        transition: all 0.15s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+    .validation-message {
+        font-size: 12px;
+        color: #dc2626;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .btn-auth {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 8px;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+        transition: transform 0.15s;
+    }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-auth:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .auth-footer {
+        text-align: center;
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 22px;
+    }
+
+        .auth-footer a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .auth-footer a:hover {
+                text-decoration: underline;
+            }
+
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        margin-top: -4px;
+        margin-bottom: 18px;
+        color: #6b7280;
+    }
+
+        .form-options a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+            .form-options a:hover {
+                text-decoration: underline;
+            }
+
+    /* ===== Toast/Error Messages ===== */
+    .toast-error {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+        .toast-error ul {
+            margin: 6px 0 0 20px;
+            font-weight: 400;
+        }
+
+    @@media (max-width: 800px) {
+        .auth-page {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-side {
+            display: none;
+        }
+    }
+</style>
+
+<div class="auth-page">
+    <!-- Left gradient panel -->
+    <div class="auth-side">
+        <div class="auth-side-icon"><i class="fa-solid fa-utensils"></i></div>
+        <h2>Welcome back to BookingBot</h2>
+        <p>Log in to manage your table reservations, chat with our AI assistant, and never wait on hold again.</p>
+        <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> Instant booking confirmation</div>
+        <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> AI assistant available 24/7</div>
+        <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> Manage all bookings in one place</div>
+    </div>
+
+    <!-- Right form panel -->
+    <div class="auth-form-panel">
+        <h2 class="auth-title">Welcome Back</h2>
+        <p class="auth-subtitle">Log in to manage your reservations</p>
+
+        <!-- Display validation errors -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="toast-error">
+                <strong>Please fix the following errors:</strong>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+            <div class="form-group">
+                <label class="form-label" asp-for="Email">Email Address <span style="color:#dc2626">*</span></label>
+                <div class="input-wrap">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" class="form-control" asp-for="Email" placeholder="you@example.com" required />
+                </div>
+                <span asp-validation-for="Email" class="validation-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="Password">Password <span style="color:#dc2626">*</span></label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" class="form-control" asp-for="Password" placeholder="Enter your password" required />
+                </div>
+                <span asp-validation-for="Password" class="validation-message"></span>
+            </div>
+
+            <div class="form-options">
+                <label>
+                    <input type="checkbox" asp-for="RememberMe" /> Remember me
+                </label>
+                <a href="@Url.Action("ForgotPassword", "Account")">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-auth" id="loginBtn">
+                <i class="fa-regular fa-arrow-right-to-bracket"></i> Log In
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account? <a href="@Url.Action("Register", "Account")">Sign up</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('form')?.addEventListener('submit', function() {
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+    });
+</script>

@@ -1,0 +1,523 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = $"Edit - {Model?.Name ?? "Property"}";
+    Layout = "_Layout";
+}
+
+<style>
+    .admin-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .page-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 6px;
+    }
+
+        .form-label .required {
+            color: #dc2626;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.15s;
+        background: #fafafa;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+        .form-check input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        padding: 14px 32px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+    .btn-secondary {
+        padding: 14px 32px;
+        background: white;
+        color: #4b5563;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+
+        .btn-secondary:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+    .btn-danger {
+        padding: 14px 32px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            color: white;
+        }
+
+    .toast-error {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+        .toast-error ul {
+            margin: 6px 0 0 20px;
+            font-weight: 400;
+        }
+
+    .current-image {
+        max-width: 200px;
+        border-radius: 8px;
+        margin-top: 8px;
+    }
+
+    /* Gallery Styles */
+    .gallery-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .gallery-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #e5e7eb;
+    }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #dc2626;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+            .gallery-item .remove-btn:hover {
+                background: #b91c1c;
+            }
+
+    .help-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+    }
+
+    @@media (max-width: 768px) {
+        .row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="admin-wrapper">
+    <div class="page-header">
+        <h2>Edit Property</h2>
+        <a href="@Url.Action("Admin", "Properties")" class="btn-secondary">
+            <i class="fa-regular fa-arrow-left"></i> Back to Properties
+        </a>
+    </div>
+
+    @if (Model != null)
+    {
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="toast-error">
+                <strong>Please fix the following errors:</strong>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <div class="form-card">
+            <form asp-action="Edit" asp-controller="Properties" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Basic Information -->
+                <h4 style="margin-bottom: 20px; color: #0f172a;">Basic Information</h4>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Name">Property Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" asp-for="Name" required />
+                        <span asp-validation-for="Name" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Type">Property Type <span class="required">*</span></label>
+                        <select class="form-control" asp-for="Type" required>
+                            <option value="">Select Type</option>
+                            <option value="Hotel">Hotel</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Resort">Resort</option>
+                            <option value="Lodge">Lodge</option>
+                            <option value="Restaurant">Restaurant</option>
+                        </select>
+                        <span asp-validation-for="Type" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Location">Location <span class="required">*</span></label>
+                        <input type="text" class="form-control" asp-for="Location" required />
+                        <span asp-validation-for="Location" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Address">Address <span class="required">*</span></label>
+                        <input type="text" class="form-control" asp-for="Address" required />
+                        <span asp-validation-for="Address" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="City">City <span class="required">*</span></label>
+                        <input type="text" class="form-control" asp-for="City" required />
+                        <span asp-validation-for="City" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Country">Country <span class="required">*</span></label>
+                        <input type="text" class="form-control" asp-for="Country" required />
+                        <span asp-validation-for="Country" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="PostalCode">Postal Code <span class="required">*</span></label>
+                        <input type="text" class="form-control" asp-for="PostalCode" required />
+                        <span asp-validation-for="PostalCode" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <!-- Empty for spacing -->
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <h4 style="margin: 30px 0 20px; color: #0f172a;">Pricing</h4>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="BasePrice">Base Price per Night <span class="required">*</span></label>
+                        <input type="number" class="form-control" asp-for="BasePrice" step="0.01" min="0" required />
+                        <span asp-validation-for="BasePrice" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Currency">Currency</label>
+                        <select class="form-control" asp-for="Currency">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="PKR">PKR (Rs)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Price">Display Price</label>
+                        <input type="text" class="form-control" asp-for="Price" />
+                        <span asp-validation-for="Price" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="MinNights">Minimum Nights</label>
+                        <input type="number" class="form-control" asp-for="MinNights" min="1" />
+                        <span asp-validation-for="MinNights" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <h4 style="margin: 30px 0 20px; color: #0f172a;">Description</h4>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="Description">Short Description <span class="required">*</span></label>
+                    <textarea class="form-control" asp-for="Description" rows="2" required></textarea>
+                    <span asp-validation-for="Description" class="validation-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="FullDescription">Full Description</label>
+                    <textarea class="form-control" asp-for="FullDescription" rows="4"></textarea>
+                    <span asp-validation-for="FullDescription" class="validation-message"></span>
+                </div>
+
+                <!-- Images -->
+                <h4 style="margin: 30px 0 20px; color: #0f172a;">Images</h4>
+
+                <div class="form-group">
+                    <label class="form-label">Main Image URL</label>
+                    <input type="text" class="form-control" asp-for="ImageUrl" />
+                    <span asp-validation-for="ImageUrl" class="validation-message"></span>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="Current Image" class="current-image" />
+                        <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Current main image</p>
+                    }
+                </div>
+
+                <!-- ✅ Gallery Images Section -->
+                <div class="form-group">
+                    <label class="form-label">Gallery Images</label>
+
+                    <!-- Current Gallery Images -->
+                    @if (Model.GalleryImages != null && Model.GalleryImages.Any())
+                    {
+                        <div class="gallery-container">
+                            @foreach (var img in Model.GalleryImages)
+                            {
+                                <div class="gallery-item">
+                                    <img src="@img" alt="Gallery image" />
+                                    <button type="button" class="remove-btn" onclick="removeGalleryImage('@img')" title="Remove image">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                        <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">@Model.GalleryImages.Count images in gallery. To remove, click the X on an image.</p>
+                    }
+                    else
+                    {
+                        <p style="font-size: 14px; color: #9ca3af; margin-top: 4px;">No gallery images yet.</p>
+                    }
+
+                    <!-- Add New Gallery Images -->
+                    <div style="margin-top: 12px;">
+                        <label class="form-label" style="font-size: 13px; font-weight: 500;">Add New Gallery Images (comma separated)</label>
+                        <input type="text" class="form-control" name="GalleryImagesInput" placeholder="/images/properties/room1.jpg, /images/properties/room2.jpg" />
+                        <div class="help-text">Add new images to the gallery (separate with commas). Existing images will be kept.</div>
+                    </div>
+
+                    <!-- Hidden field to track removed images -->
+                    <input type="hidden" name="RemovedGalleryImages" id="removedGalleryImages" value="" />
+                </div>
+
+                <!-- Features -->
+                <h4 style="margin: 30px 0 20px; color: #0f172a;">Features</h4>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="MaxGuests">Max Guests</label>
+                        <input type="number" class="form-control" asp-for="MaxGuests" min="1" />
+                        <span asp-validation-for="MaxGuests" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Featured Property</label>
+                        <div class="form-check">
+                            <input type="checkbox" asp-for="IsFeatured" />
+                            <label asp-for="IsFeatured">Mark as Featured</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amenities -->
+                <h4 style="margin: 30px 0 20px; color: #0f172a;">Amenities</h4>
+
+                <div class="form-group">
+                    <label class="form-label">Amenities (comma separated)</label>
+                    <input type="text" class="form-control" name="AmenitiesInput" placeholder="e.g. Free WiFi, Parking, Pool, Spa" value="@(Model.Amenities != null ? string.Join(", ", Model.Amenities) : "")" />
+                    <small class="text-muted">Separate amenities with commas</small>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-regular fa-floppy-disk"></i> Update Property
+                    </button>
+                    <a href="@Url.Action("Admin", "Properties")" class="btn-secondary">
+                        <i class="fa-regular fa-xmark"></i> Cancel
+                    </a>
+                    <a href="@Url.Action("Delete", "Properties", new { id = Model.Id })" class="btn-danger">
+                        <i class="fa-regular fa-trash-can"></i> Delete Property
+                    </a>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="toast-error">
+            <strong>Property not found</strong>
+            <p>The property you're trying to edit doesn't exist.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Track removed gallery images
+        let removedImages = [];
+
+        function removeGalleryImage(imageUrl) {
+            if (confirm('Remove this image from gallery?')) {
+                // Add to removed list
+                removedImages.push(imageUrl);
+                document.getElementById('removedGalleryImages').value = removedImages.join(',');
+
+                // Remove the image element from DOM
+                const galleryItems = document.querySelectorAll('.gallery-item');
+                galleryItems.forEach(item => {
+                    const img = item.querySelector('img');
+                    if (img && img.src === imageUrl) {
+                        item.remove();
+                    }
+                });
+
+                // Update count message
+                const remaining = document.querySelectorAll('.gallery-item').length;
+                const messageEl = document.querySelector('.gallery-container + p');
+                if (messageEl) {
+                    if (remaining === 0) {
+                        messageEl.textContent = 'No gallery images remaining.';
+                    } else {
+                        messageEl.textContent = remaining + ' image' + (remaining > 1 ? 's' : '') + ' remaining in gallery.';
+                    }
+                }
+            }
+        }
+
+        // Preview new gallery images as user types
+        document.querySelector('[name="GalleryImagesInput"]')?.addEventListener('input', function() {
+            // Optional: Show preview of new images
+            const urls = this.value.split(',').map(s => s.trim()).filter(s => s);
+            if (urls.length > 0) {
+                console.log('New images to add:', urls);
+            }
+        });
+    </script>
+}

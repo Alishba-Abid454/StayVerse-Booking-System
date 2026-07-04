@@ -1,0 +1,365 @@
+﻿@model IEnumerable<Hotel_Booking_System.Models.Table>
+
+@{
+    ViewData["Title"] = "Manage Tables";
+    Layout = "_Layout";
+    var tables = Model ?? new List<Hotel_Booking_System.Models.Table>();
+}
+
+<style>
+    .admin-wrapper {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .page-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+    .btn-primary {
+        padding: 12px 24px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+    .btn-sm {
+        padding: 4px 12px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #4b5563;
+        display: inline-block;
+    }
+
+        .btn-sm.danger {
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+            .btn-sm.danger:hover {
+                background: #fee2e2;
+            }
+
+        .btn-sm.primary {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+            .btn-sm.primary:hover {
+                background: #1d4ed8;
+            }
+
+    .tables-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        text-align: center;
+        position: relative;
+    }
+
+        .table-card.inactive {
+            opacity: 0.55;
+        }
+
+    .table-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin: 0 auto 12px;
+    }
+
+    .table-card h4 {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+
+    .table-card .capacity {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 12px;
+    }
+
+    .status-dot {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+        .status-dot.active {
+            background: #22c55e;
+        }
+
+        .status-dot.inactive {
+            background: #d1d5db;
+        }
+
+    .table-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1.5px solid #e5e7eb;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #4b5563;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+        .btn-icon:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .btn-icon.danger:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+    .table-form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 26px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+        display: none;
+    }
+
+        .table-form-section.show {
+            display: block;
+        }
+
+        .table-form-section h3 {
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #4b5563;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: #9ca3af;
+    }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+    .toast-success {
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    @@media (max-width: 900px) {
+        .tables-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-wrapper">
+    <div class="page-header">
+        <h2>Manage Tables</h2>
+        <button class="btn-primary" onclick="toggleTableForm()">
+            <i class="fa-solid fa-plus"></i> Add Table
+        </button>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-success">@TempData["Success"]</div>
+    }
+
+    <!-- Add/Edit Table Form -->
+    <div class="table-form-section" id="tableForm">
+        <h3 id="formTitle">Add New Table</h3>
+        <form asp-controller="Admin" asp-action="SaveTable" method="post" id="tableForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" id="editTableId" />
+            <div class="row">
+                <div class="form-group">
+                    <label class="form-label">Table Number</label>
+                    <input type="text" class="form-control" name="TableNumber" id="tableNumber" placeholder="e.g. T-12" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Capacity</label>
+                    <input type="number" class="form-control" name="Capacity" id="tableCapacity" placeholder="e.g. 4" min="1" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <select class="form-control" name="Location" id="tableLocation">
+                        <option value="Indoor">Indoor</option>
+                        <option value="Outdoor">Outdoor</option>
+                        <option value="Window">Window</option>
+                        <option value="PrivateRoom">Private Room</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                        <i class="fa-regular fa-floppy-disk"></i> Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tables Grid -->
+    <div class="tables-grid">
+        @if (tables.Any())
+        {
+            @foreach (var t in tables)
+            {
+                <div class="table-card @(t.IsActive ? "" : "inactive")">
+                    <span class="status-dot @(t.IsActive ? "active" : "inactive")"></span>
+                    <div class="table-icon"><i class="fa-solid fa-chair"></i></div>
+                    <h4>Table @t.TableNumber</h4>
+                    <div class="capacity">Seats @t.Capacity · @t.Location</div>
+                    <div class="table-actions">
+                        <button class="btn-icon" title="Edit" onclick="editTable('@t.Id', '@t.TableNumber', '@t.Capacity', '@t.Location')">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <form asp-controller="Admin" asp-action="DeleteTable" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this table?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@t.Id" />
+                            <button type="submit" class="btn-icon danger" title="Delete">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fa-regular fa-chair"></i>
+                <p>No tables added yet</p>
+                <button class="btn-primary" onclick="toggleTableForm()" style="margin-top: 12px;">Add Your First Table</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function toggleTableForm() {
+        const form = document.getElementById('tableForm');
+        form.classList.toggle('show');
+        if (!form.classList.contains('show')) {
+            // Reset form when hiding
+            document.getElementById('editTableId').value = '';
+            document.getElementById('tableNumber').value = '';
+            document.getElementById('tableCapacity').value = '';
+            document.getElementById('tableLocation').value = 'Indoor';
+            document.getElementById('formTitle').textContent = 'Add New Table';
+        }
+    }
+
+    function editTable(id, number, capacity, location) {
+        document.getElementById('editTableId').value = id;
+        document.getElementById('tableNumber').value = number;
+        document.getElementById('tableCapacity').value = capacity;
+        document.getElementById('tableLocation').value = location;
+        document.getElementById('formTitle').textContent = 'Edit Table';
+        document.getElementById('tableForm').classList.add('show');
+    }
+</script>

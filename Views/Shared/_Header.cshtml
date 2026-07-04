@@ -1,0 +1,77 @@
+﻿@*
+    Usage: include at the top of any view's content area, e.g.:
+    <partial name="_Header" model='new HeaderViewData { Title = "Book a Table", Subtitle = "Pick a date and we will find you a spot", BreadcrumbCurrent = "Book a Table" }' />
+*@
+@model dynamic
+
+<style>
+    .page-header-banner {
+        background: white;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 26px 40px;
+    }
+
+    .breadcrumb {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #2563eb;
+        }
+
+        .breadcrumb i {
+            font-size: 10px;
+            color: #d1d5db;
+        }
+
+    .breadcrumb-current {
+        color: #1a1a1a;
+        font-weight: 500;
+    }
+
+    .page-header-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .page-header-subtitle {
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    @@media (max-width: 768px) {
+        .page-header-banner {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="page-header-banner">
+    <div class="breadcrumb">
+        <a href="@Url.Action("Index", "Home")">Home</a>
+        @if (Model?.BreadcrumbCurrent != null)
+        {
+            <i class="fa-solid fa-chevron-right"></i>
+            <span class="breadcrumb-current">@Model.BreadcrumbCurrent</span>
+        }
+    </div>
+
+    <div class="page-header-title">@(Model?.Title ?? ViewData["Title"])</div>
+
+    @if (Model?.Subtitle != null)
+    {
+        <div class="page-header-subtitle">@Model.Subtitle</div>
+    }
+</div>

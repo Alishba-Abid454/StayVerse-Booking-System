@@ -1,0 +1,430 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "About Us";
+}
+
+<style>
+    /* ===== Reset & Base ===== */
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f4f6f9;
+    }
+
+    /* ===== Hero ===== */
+    .about-hero {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+        padding: 80px 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .about-hero::before {
+            content: "";
+            position: absolute;
+            top: -70px;
+            right: -70px;
+            width: 260px;
+            height: 260px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .about-hero::after {
+            content: "";
+            position: absolute;
+            bottom: -90px;
+            left: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+        }
+
+    .about-hero-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        align-items: center;
+        gap: 40px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .about-hero h1 {
+        font-size: 38px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+        .about-hero h1 span {
+            color: #93c5fd;
+        }
+
+    .about-hero .lead {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .about-hero p.muted {
+        font-size: 14.5px;
+        opacity: 0.9;
+        line-height: 1.6;
+        max-width: 460px;
+    }
+
+    .about-hero-icon {
+        text-align: center;
+        font-size: 110px;
+        opacity: 0.5;
+    }
+
+    /* ===== Stats Strip ===== */
+    .stats-strip {
+        max-width: 1000px;
+        margin: -36px auto 0;
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 14px 36px rgba(15,23,42,0.1);
+        padding: 28px 20px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        position: relative;
+        z-index: 5;
+    }
+
+    .stat-block {
+        text-align: center;
+    }
+
+        .stat-block .num {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .stat-block .label {
+            font-size: 12.5px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+    /* ===== Values Section ===== */
+    .section-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 80px 20px 20px;
+    }
+
+    .section-heading {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+        .section-heading h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .section-heading p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .value-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px 26px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+        transition: all 0.25s ease;
+    }
+
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 36px rgba(15,23,42,0.12);
+        }
+
+    .value-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 18px;
+    }
+
+    .value-card h5 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #0f172a;
+    }
+
+    .value-card p {
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    /* ===== Story Section ===== */
+    .story-section {
+        max-width: 1100px;
+        margin: 70px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+    }
+
+        .story-section h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+
+        .story-section p {
+            font-size: 14.5px;
+            color: #6b7280;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+    .story-image {
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 14px 32px rgba(15,23,42,0.1);
+    }
+
+        .story-image img {
+            width: 100%;
+            display: block;
+            height: auto;
+        }
+
+    /* ===== CTA Banner ===== */
+    .about-cta {
+        max-width: 1100px;
+        margin: 60px auto 80px;
+        padding: 0 20px;
+    }
+
+    .about-cta-card {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border-radius: 20px;
+        padding: 46px 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .about-cta-text h3 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .about-cta-text p {
+        font-size: 14px;
+        opacity: 0.9;
+        max-width: 420px;
+    }
+
+    .btn-cta {
+        padding: 14px 26px;
+        background: white;
+        color: #2563eb;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        transition: background 0.2s, transform 0.2s;
+    }
+
+        .btn-cta:hover {
+            background: #f0f4ff;
+            transform: scale(1.02);
+        }
+
+    /* ===== Responsive ===== */
+    @@media (max-width: 992px) {
+        .about-hero-inner {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .about-hero p.muted {
+            max-width: 100%;
+        }
+
+        .story-section {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .about-hero-icon {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .stats-strip {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 0;
+            margin: -30px 16px 0;
+            padding: 20px 16px;
+        }
+
+        .values-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .about-cta-card {
+            padding: 30px 24px;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .about-cta-text p {
+            max-width: 100%;
+        }
+
+        .about-hero h1 {
+            font-size: 30px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .about-hero {
+            padding: 60px 16px;
+        }
+
+            .about-hero h1 {
+                font-size: 26px;
+            }
+
+        .story-section {
+            margin: 40px auto;
+        }
+
+        .about-cta {
+            margin: 40px auto;
+        }
+    }
+</style>
+
+<!-- ===== Hero ===== -->
+<section class="about-hero">
+    <div class="about-hero-inner">
+        <div>
+            <h1>About <span>BookingBot</span></h1>
+            <p class="lead">Effortless Reservations, Powered by AI</p>
+            <p class="muted">Since day one, we've been on a mission to make booking a table as easy as sending a text — combining real-time availability with a conversational assistant that handles the rest.</p>
+        </div>
+        <div class="about-hero-icon">
+            <i class="fa-solid fa-utensils"></i>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Stats Strip ===== -->
+<div class="stats-strip">
+    <div class="stat-block">
+        <div class="num">50K+</div>
+        <div class="label">Reservations Booked</div>
+    </div>
+    <div class="stat-block">
+        <div class="num">120+</div>
+        <div class="label">Partner Restaurants</div>
+    </div>
+    <div class="stat-block">
+        <div class="num">98%</div>
+        <div class="label">On-Time Confirmation</div>
+    </div>
+    <div class="stat-block">
+        <div class="num">24/7</div>
+        <div class="label">AI Assistant Support</div>
+    </div>
+</div>
+
+<!-- ===== Values ===== -->
+<section class="section-wrapper">
+    <div class="section-heading">
+        <h2>What We Stand For</h2>
+        <p>The principles that guide every reservation we power</p>
+    </div>
+    <div class="values-grid">
+        <div class="value-card">
+            <div class="value-icon"><i class="fa-solid fa-bolt"></i></div>
+            <h5>Speed &amp; Simplicity</h5>
+            <p>No phone calls, no hold music. Check availability and confirm a table in under a minute.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon"><i class="fa-solid fa-robot"></i></div>
+            <h5>Smart Assistance</h5>
+            <p>Our AI assistant understands natural requests and books directly into live availability.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon"><i class="fa-solid fa-shield-heart"></i></div>
+            <h5>Reliability You Can Trust</h5>
+            <p>Real-time sync with our database means no double bookings and no surprises at the door.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Story Section ===== -->
+<section class="story-section">
+    <div>
+        <h2>Built for Diners and Restaurants Alike</h2>
+        <p>BookingBot started as a simple idea: reservations shouldn't require waiting on hold or guessing whether a table is actually free. We built a system that connects guests directly to live availability.</p>
+        <p>Today, restaurants use BookingBot to manage their floor in real time, while guests enjoy instant confirmations — whether they book through our site or simply chat with our assistant.</p>
+    </div>
+    <div class="story-image">
+        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=700&q=70" alt="Restaurant interior" loading="lazy" />
+    </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="about-cta">
+    <div class="about-cta-card">
+        <div class="about-cta-text">
+            <h3>Ready to book your next table?</h3>
+            <p>Search live availability or just chat with our assistant — either way, you'll be seated in minutes.</p>
+        </div>
+        <a href="@Url.Action("Book", "Reservation")" class="btn-cta">
+            <i class="fa-regular fa-calendar-check"></i> Book a Table
+        </a>
+    </div>
+</section>
