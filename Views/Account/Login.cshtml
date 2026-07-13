@@ -14,6 +14,15 @@
         background-color: #f4f6f9;
     }
 
+    .auth-side-logo {
+        margin-bottom: 20px;
+    }
+
+        .auth-side-logo img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
     .auth-page {
         max-width: 920px;
         margin: 50px auto;
@@ -272,8 +281,10 @@
 <div class="auth-page">
     <!-- Left gradient panel -->
     <div class="auth-side">
-        <div class="auth-side-icon"><i class="fa-solid fa-utensils"></i></div>
-        <h2>Welcome back to BookingBot</h2>
+        <div class="auth-side-logo">
+            <img src="~/images/logo.png" alt="StayVerse Logo">
+        </div>
+        <h2>Welcome back to StayVerse</h2>
         <p>Log in to manage your table reservations, chat with our AI assistant, and never wait on hold again.</p>
         <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> Instant booking confirmation</div>
         <div class="auth-perk"><i class="fa-solid fa-circle-check"></i> AI assistant available 24/7</div>

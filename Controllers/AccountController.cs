@@ -20,7 +20,7 @@ namespace Hotel_Booking_System.Controllers
         }
 
         // GET: Account/Login
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -43,6 +43,13 @@ namespace Hotel_Booking_System.Controllers
 
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+
+                    if (user != null && user.Email == "admin@bookingbot.com")
+                    {
+                        return RedirectToAction("Dashboard", "Admin");
+                    }
+
                     return RedirectToLocal(returnUrl);
                 }
                 else

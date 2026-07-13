@@ -28,6 +28,11 @@ namespace Hotel_Booking_System.Controllers
             var properties = await _propertyService.GetAllPropertiesAsync();
             return View(properties);
         }
+        public async Task<IActionResult> Restaurants()
+        {
+            var restaurants = await _propertyService.GetPropertiesByTypeAsync("Restaurant");
+            return View(restaurants);
+        }
 
         // GET: Properties/Details/5
         public async Task<IActionResult> Details(int id)

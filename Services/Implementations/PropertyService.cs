@@ -120,6 +120,23 @@ namespace Hotel_Booking_System.Services.Implementations
 
             await _propertyRepository.AddAsync(property);
             await _propertyRepository.SaveChangesAsync();
+/*            var room = new RoomType
+            {
+                PropertyId = property.Id,
+                Name = "Standard Room",
+                Description = "Default Room",
+                BedType = "Double",
+                MaxGuests = property.MaxGuests,
+                Bedrooms = 1,
+                Bathrooms = 1,
+                PricePerNight = property.BasePrice,
+                WeekendPrice = property.BasePrice,
+                Quantity = 10,
+                AvailableQuantity = 10,
+                Size = "250 sq ft"
+            };
+
+            await _propertyRepository.AddRoomTypeAsync(room);*/
 
             return MapToViewModel(property);
         }

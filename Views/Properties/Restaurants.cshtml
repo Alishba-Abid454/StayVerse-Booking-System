@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Hotel_Booking_System.Models.ViewModels.PropertyViewModel>
+
+<h2>Restaurants</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <img src="@item.ImageUrl" class="card-img-top" />
+
+                <div class="card-body">
+                    <h5>@item.Name</h5>
+                    <p>@item.Location</p>
+
+                    <a asp-controller="Reservation"
+                       asp-action="Book"
+                       asp-route-propertyId="@item.Id"
+                       class="btn btn-primary">
+                        Book Table
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
