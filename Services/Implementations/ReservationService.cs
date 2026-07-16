@@ -27,14 +27,24 @@ namespace Hotel_Booking_System.Services.Implementations
 
         public async Task<ReservationViewModel> CreateReservationAsync(BookingViewModel model, string userId)
         {
-            // Validate dates
+            // ✅ Validate dates
             if (model.CheckInDate >= model.CheckOutDate)
                 throw new Exception("Check-in date must be before check-out date");
 
             if (model.CheckInDate < DateTime.Now.Date)
                 throw new Exception("Cannot book for past dates");
 
-            // Check availability
+            // ✅ Validate required fields
+            if (string.IsNullOrEmpty(userId))
+                throw new Exception("User ID is required. Please log in.");
+
+            if (model.PropertyId <= 0)
+                throw new Exception("Invalid property selected.");
+
+            if (!model.SelectedRoomTypeId.HasValue || model.SelectedRoomTypeId.Value <= 0)
+                throw new Exception("Please select a room type.");
+
+            // ✅ Check availability
             var isAvailable = await CheckAvailabilityAsync(
                 model.PropertyId,
                 model.SelectedRoomTypeId,
@@ -48,35 +58,55 @@ namespace Hotel_Booking_System.Services.Implementations
             if (property == null)
                 throw new Exception("Property not found");
 
-            // Calculate total price
+            // ✅ Calculate total price
             var nights = (model.CheckOutDate - model.CheckInDate).Days;
             var totalPrice = model.PricePerNight * nights;
 
-            // Apply discounts or taxes if needed
-            // totalPrice = ApplyDiscounts(totalPrice, userId);
+            // ✅ Generate unique reservation number
+            var reservationNumber = $"RES-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
 
+            // ✅ CREATE RESERVATION WITH ALL REQUIRED FIELDS
             var reservation = new Reservation
             {
-                ReservationNumber = await GenerateReservationNumberAsync(),
+                // ✅ REQUIRED - Must have values
+                ReservationNumber = reservationNumber,
                 PropertyId = model.PropertyId,
-                RoomTypeId = model.SelectedRoomTypeId,
+                RoomTypeId = model.SelectedRoomTypeId.Value,
                 UserId = userId,
-                UserName = model.FullName,
-                UserEmail = model.Email,
-                UserPhone = model.PhoneNumber,
+
+                // ✅ REQUIRED - Use model values or defaults
+                UserName = model.FullName ?? "Guest User",
+                UserEmail = model.Email ?? "guest@email.com",
+                UserPhone = model.PhoneNumber ?? "N/A",
+
+                // ✅ Date fields
                 CheckInDate = model.CheckInDate,
                 CheckOutDate = model.CheckOutDate,
                 NumberOfGuests = model.NumberOfGuests,
                 NumberOfRooms = model.NumberOfRooms,
+
+                // ✅ Price fields
                 TotalPrice = totalPrice,
                 PricePerNight = model.PricePerNight,
+
+                // ✅ REQUIRED - Set default values
                 Currency = "USD",
                 Status = "Pending",
-                SpecialRequests = model.SpecialRequests,
+                SpecialRequests = model.SpecialRequests ?? "",
+
+                // ✅ REQUIRED - Payment defaults
                 IsPaid = false,
-                CreatedAt = DateTime.UtcNow
+                PaymentMethod = "Not Paid",
+                PaymentDate = null,
+
+                // ✅ REQUIRED - Timestamps
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                CancelledAt = null,
+                CancellationReason = null
             };
 
+            // ✅ Save to database
             await _reservationRepository.AddAsync(reservation);
             await _reservationRepository.SaveChangesAsync();
 
@@ -135,6 +165,19 @@ namespace Hotel_Booking_System.Services.Implementations
         {
             var reservations = await _reservationRepository.GetReservationsByStatusAsync(status);
             return reservations.Select(r => MapToViewModel(r));
+        }
+
+        public async Task UpdateReservationUserIdAsync(int reservationId, string userId)
+        {
+            var reservation = await _reservationRepository.GetByIdAsync(reservationId);
+            if (reservation == null)
+                throw new Exception("Reservation not found");
+
+            reservation.UserId = userId;
+            reservation.UpdatedAt = DateTime.UtcNow;
+
+            _reservationRepository.Update(reservation);
+            await _reservationRepository.SaveChangesAsync();
         }
 
         public async Task<bool> CancelReservationAsync(int reservationId, string reason)

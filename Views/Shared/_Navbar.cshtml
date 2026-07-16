@@ -1,4 +1,5 @@
 ﻿<style>
+    /* ===== Navbar Container ===== */
     .navbar {
         background: white;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -9,14 +10,26 @@
         position: sticky;
         top: 0;
         z-index: 100;
+        transition: box-shadow 0.3s ease;
     }
 
+        .navbar:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+    /* ===== Logo ===== */
     .logo {
         width: 60px;
         height: 60px;
         object-fit: contain;
         margin-right: 4px;
+        transition: transform 0.3s ease;
     }
+
+        .logo:hover {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
     .navbar-brand {
         font-size: 26px;
         font-weight: 700;
@@ -25,56 +38,129 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        
+        transition: color 0.3s ease;
     }
 
+        .navbar-brand:hover {
+            color: #1d4ed8;
+        }
+
+    /* ===== Navigation Links ===== */
     .navbar-links {
         display: flex;
         align-items: center;
         gap: 28px;
     }
 
-        .navbar-links a {
+        .navbar-links a:not(.btn-nav) {
             text-decoration: none;
             color: #4b5563;
             font-weight: 500;
             font-size: 15px;
             transition: color 0.2s;
+            position: relative;
+            padding: 4px 0;
         }
 
-            .navbar-links a:hover {
+            .navbar-links a:not(.btn-nav)::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(90deg, #2563eb, #7c3aed);
+                transition: width 0.3s ease;
+                border-radius: 10px;
+            }
+
+            .navbar-links a:not(.btn-nav):hover {
                 color: #2563eb;
             }
 
+                .navbar-links a:not(.btn-nav):hover::after {
+                    width: 100%;
+                }
+
+    /* ========================================
+           BUTTON STYLES
+           ======================================== */
+
+    /* --- Base Button Styles --- */
     .btn-nav {
-        padding: 10px 20px;
-        border-radius: 10px;
+        padding: 10px 24px;
+        border-radius: 50px;
         font-weight: 600;
         font-size: 14px;
         text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        border: none;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease;
     }
 
-    .btn-nav-primary {
-        background: white;
-        border: 1.5px solid #1d4ed6;
-        color: white;
+    /* --- Login Button (Outline - Hover matches Sign Up) --- */
+    .btn-nav-outline {
+        background: transparent;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+        /* ✅ No hover effect by default */
     }
 
-        .btn-nav-primary:hover {
-            background: #1d4ed6;
+        /* ✅ FIX: On hover, Login button becomes gradient like Sign Up */
+        .btn-nav-outline:hover {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
         }
 
-    .btn-nav-outline {
-        border: 1.5px solid #1d4ed6;
+    /* --- Sign Up Button (Gradient - No hover effect) --- */
+    .btn-nav-primary {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
         color: white;
-        background: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+        /* ✅ No hover effect */
     }
+
+    /* ========================================
+           MOBILE RESPONSIVE
+           ======================================== */
 
     @@media (max-width: 768px) {
-        .navbar-links {
-            display: none;
-        }
+        .navbar-links
+
+    {
+        display: none;
+    }
+
+    .navbar-toggle {
+        display: flex;
+    }
+
+    }
+
+    @@media (max-width: 480px) {
+        .navbar
+
+    {
+        padding: 10px 16px;
+    }
+
+    .navbar-brand {
+        font-size: 20px;
+    }
+
+    .logo {
+        width: 45px;
+        height: 45px;
+    }
+
     }
 </style>
 
@@ -85,12 +171,17 @@
     </a>
     <div class="navbar-links">
         <a href="@Url.Action("Index", "Home")">Home</a>
-    <a href="@Url.Action("Restaurants", "Properties")">
-        Book a Table
-    </a>
-        <a href="@Url.Action("MyReservations", "Reservation")">My Reservations</a>
+        <a href="@Url.Action("Restaurants", "Properties")">Book a Table</a>
         <a href="@Url.Action("About", "Home")">About</a>
-        <a href="@Url.Action("Login", "Account")" class="btn-nav btn-nav-outline">Log In</a>
-        <a href="@Url.Action("SignUp", "Account")" class="btn-nav btn-nav-primary">Sign Up</a>
+
+        <!-- ✅ FIXED: Login Button with OUTLINE style -->
+        <a href="@Url.Action("Login", "Account")" class="btn-nav btn-nav-outline">
+            <i class="fas fa-sign-in-alt"></i> Log In
+        </a>
+
+        <!-- Sign Up Button - Gradient -->
+        <a href="@Url.Action("Register", "Account")" class="btn-nav btn-nav-outline">
+            <i class="fas fa-user-plus"></i> Sign Up
+        </a>
     </div>
 </nav>

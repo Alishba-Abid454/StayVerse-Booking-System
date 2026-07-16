@@ -11,6 +11,11 @@
         Task<Property> GetPropertyWithRoomsAsync(int id);
         Task<Property> GetPropertyWithReviewsAsync(int id);
         Task<double> GetAverageRatingAsync(int propertyId);
+        Task AddRoomTypeAsync(RoomType roomType);
+        Task UpdateRoomTypeAsync(RoomType roomType);
+        Task DeleteRoomTypeAsync(int roomTypeId);
+        Task<RoomType> GetRoomTypeByIdAsync(int roomTypeId);
+        Task<IEnumerable<RoomType>> GetRoomTypesByPropertyAsync(int propertyId);
         Task<int> GetTotalReviewsAsync(int propertyId);
         Task<bool> IsPropertyAvailableAsync(int propertyId, DateTime checkIn, DateTime checkOut);
         Task<IEnumerable<Property>> GetTopRatedPropertiesAsync(int count = 10);

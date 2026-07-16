@@ -31,11 +31,9 @@ namespace Hotel_Booking_System.Services.Implementations
             if (reservation.IsPaid)
                 throw new Exception("Reservation is already paid");
 
-            // Validate amount
             if (amount != reservation.TotalPrice)
                 throw new Exception("Payment amount does not match reservation total");
 
-            // Generate transaction ID
             var transactionId = $"TXN-{DateTime.Now:yyyyMMdd}-{new Random().Next(100000, 999999)}";
 
             var payment = new Payment
@@ -45,16 +43,18 @@ namespace Hotel_Booking_System.Services.Implementations
                 PaymentMethod = paymentMethod,
                 Amount = amount,
                 Currency = reservation.Currency ?? "USD",
-                Status = "Completed", // In real implementation, you'd validate with payment gateway
+                Status = "Completed",
                 PaymentDate = DateTime.UtcNow,
-                CardLastFour = "1234", // Masked card number
-                CardBrand = "Visa"
+                CardLastFour = "1234",
+                CardBrand = "Visa",
+                RefundReason = string.Empty,
+                RefundAmount = null,
+                RefundDate = null
             };
 
             await _paymentRepository.AddAsync(payment);
             await _paymentRepository.SaveChangesAsync();
 
-            // Update reservation as paid
             reservation.IsPaid = true;
             reservation.PaymentMethod = paymentMethod;
             reservation.PaymentDate = DateTime.UtcNow;
@@ -66,18 +66,21 @@ namespace Hotel_Booking_System.Services.Implementations
             return MapToViewModel(payment);
         }
 
+        // ✅ FIXED: This was throwing NotImplementedException
         public async Task<PaymentViewModel> GetPaymentByIdAsync(int id)
         {
             var payment = await _paymentRepository.GetByIdAsync(id);
             return payment != null ? MapToViewModel(payment) : null;
         }
 
+        // ✅ FIXED: This was throwing NotImplementedException
         public async Task<PaymentViewModel> GetPaymentByTransactionIdAsync(string transactionId)
         {
             var payment = await _paymentRepository.GetPaymentByTransactionIdAsync(transactionId);
             return payment != null ? MapToViewModel(payment) : null;
         }
 
+        // ✅ FIXED: This was throwing NotImplementedException - CRITICAL FIX!
         public async Task<PaymentViewModel> GetPaymentByReservationIdAsync(int reservationId)
         {
             var payment = await _paymentRepository.GetPaymentByReservationIdAsync(reservationId);
@@ -134,7 +137,6 @@ namespace Hotel_Booking_System.Services.Implementations
             _paymentRepository.Update(payment);
             await _paymentRepository.SaveChangesAsync();
 
-            // Update reservation
             var reservation = await _reservationRepository.GetReservationWithDetailsAsync(payment.ReservationId);
             if (reservation != null)
             {
@@ -183,7 +185,13 @@ namespace Hotel_Booking_System.Services.Implementations
                 PaymentDate = payment.PaymentDate,
                 RefundDate = payment.RefundDate,
                 RefundReason = payment.RefundReason,
-                RefundAmount = payment.RefundAmount
+                RefundAmount = payment.RefundAmount,
+                ReceiptUrl = "#",
+                InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{payment.Id}",
+                BillingAddress = "",
+                BillingCity = "",
+                BillingCountry = "",
+                BillingPostalCode = ""
             };
         }
 

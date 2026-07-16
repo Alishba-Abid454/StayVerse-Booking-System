@@ -585,7 +585,7 @@
             <a href="@Url.Action("TopRated", "Properties")">View all &rarr;</a>
         </div>
         <div class="property-grid">
-            @foreach (var property in topRatedProperties.Take(4))
+            @foreach (var property in topRatedProperties.Take(3))
             {
                 <a href="@Url.Action("Details", "Properties", new { id = property.Id })" class="property-card">
                     <img src="@(property.ImageUrl ?? "/images/default-property.jpg")" class="property-img" alt="@property.Name" />

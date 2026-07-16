@@ -200,6 +200,45 @@ namespace Hotel_Booking_System.Models.Repositories
                 .Where(p => propertyIds.Contains(p.Id))
                 .ToListAsync();
         }
+        public async Task AddRoomTypeAsync(RoomType roomType)
+        {
+            if (roomType == null)
+                throw new ArgumentNullException(nameof(roomType));
+
+            await _context.RoomTypes.AddAsync(roomType);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateRoomTypeAsync(RoomType roomType)
+        {
+            if (roomType == null)
+                throw new ArgumentNullException(nameof(roomType));
+
+            _context.RoomTypes.Update(roomType);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteRoomTypeAsync(int roomTypeId)
+        {
+            var roomType = await _context.RoomTypes.FindAsync(roomTypeId);
+            if (roomType != null)
+            {
+                _context.RoomTypes.Remove(roomType);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<RoomType> GetRoomTypeByIdAsync(int roomTypeId)
+        {
+            return await _context.RoomTypes.FindAsync(roomTypeId);
+        }
+
+        public async Task<IEnumerable<RoomType>> GetRoomTypesByPropertyAsync(int propertyId)
+        {
+            return await _context.RoomTypes
+                .Where(r => r.PropertyId == propertyId && r.IsActive)
+                .ToListAsync();
+        }
 
         public async Task<Dictionary<int, double>> GetOccupancyRatesAsync(DateTime startDate, DateTime endDate)
         {

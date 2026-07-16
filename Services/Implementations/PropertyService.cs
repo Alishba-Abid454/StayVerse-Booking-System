@@ -42,9 +42,48 @@ namespace Hotel_Booking_System.Services.Implementations
             if (property == null) return null;
 
             var viewModel = MapToViewModel(property);
-            viewModel.RoomTypes = property.RoomTypes?.Select(r => MapToRoomTypeViewModel(r)).ToList();
-            viewModel.Reviews = property.Reviews?.Select(r => MapToReviewViewModel(r)).ToList();
-            viewModel.Amenities = property.Amenities?.Select(a => a.Name).ToList();
+
+            if (property.RoomTypes != null && property.RoomTypes.Any())
+            {
+                viewModel.RoomTypes = property.RoomTypes
+                    .Select(r => MapToRoomTypeViewModel(r))
+                    .ToList();
+            }
+            else
+            {
+                viewModel.RoomTypes = new List<RoomTypeViewModel>
+                {
+                new RoomTypeViewModel
+                {
+                    Id = 0,
+                    PropertyId = id,
+                    Name = "Standard Room",
+                    Description = "Comfortable standard room with all amenities",
+                    BedType = "Double Bed",
+                    MaxGuests = property.MaxGuests,
+                    Bedrooms = 1,
+                    Bathrooms = 1,
+                    PricePerNight = property.BasePrice,
+                    WeekendPrice = property.BasePrice * 1.2m,
+                    Quantity = 10,
+                    AvailableQuantity = 10,
+                    Size = "30 m²",
+                    View = "City View",
+                    IsSmokingAllowed = false,
+                    IsPetFriendly = false,
+                    RoomAmenities = new List<string> { "WiFi", "AC", "TV", "Bathroom" },
+                    IsAvailable = true
+                }
+            };
+        }
+
+            viewModel.Reviews = property.Reviews != null
+                ? property.Reviews.Select(r => MapToReviewViewModel(r)).ToList()
+                : new List<ReviewViewModel>();
+
+            viewModel.Amenities = property.Amenities != null
+                ? property.Amenities.Select(a => a.Name).ToList()
+                : new List<string>();
 
             return viewModel;
         }
@@ -120,24 +159,29 @@ namespace Hotel_Booking_System.Services.Implementations
 
             await _propertyRepository.AddAsync(property);
             await _propertyRepository.SaveChangesAsync();
-/*            var room = new RoomType
+            var defaultRoom = new RoomType
             {
                 PropertyId = property.Id,
                 Name = "Standard Room",
-                Description = "Default Room",
-                BedType = "Double",
+                Description = "Comfortable standard room with all amenities",
+                BedType = "Double Bed",
                 MaxGuests = property.MaxGuests,
                 Bedrooms = 1,
                 Bathrooms = 1,
                 PricePerNight = property.BasePrice,
-                WeekendPrice = property.BasePrice,
+                WeekendPrice = property.BasePrice * 1.2m,
                 Quantity = 10,
                 AvailableQuantity = 10,
-                Size = "250 sq ft"
+                Size = "30 m²",
+                View = "City View",
+                IsSmokingAllowed = false,
+                IsPetFriendly = false,
+                RoomAmenities = new List<string> { "WiFi", "AC", "TV", "Bathroom" },
+                IsActive = true
             };
 
-            await _propertyRepository.AddRoomTypeAsync(room);*/
-
+            await _propertyRepository.AddRoomTypeAsync(defaultRoom);
+            await _propertyRepository.SaveChangesAsync();
             return MapToViewModel(property);
         }
 

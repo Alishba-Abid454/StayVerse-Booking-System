@@ -6,6 +6,8 @@ namespace Hotel_Booking_System.Services.Interfaces
     {
         Task<ReservationViewModel> CreateReservationAsync(BookingViewModel model, string userId);
         Task<ReservationViewModel> GetReservationByIdAsync(int id);
+        Task UpdateReservationUserIdAsync(int reservationId, string userId);
+
         Task<ReservationViewModel> GetReservationByNumberAsync(string reservationNumber);
         Task<IEnumerable<ReservationViewModel>> GetUserReservationsAsync(string userId);
         Task<IEnumerable<ReservationViewModel>> GetUserReservationsByEmailAsync(string email);

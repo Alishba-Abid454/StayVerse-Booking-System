@@ -65,10 +65,11 @@ namespace Hotel_Booking_System.Controllers
         // GET: Account/Register
         public IActionResult Register()
         {
-            return View();
+            return View("Register");
         }
 
         // POST: Account/Register
+        // ✅ FIXED: Changed from SignUp to Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)

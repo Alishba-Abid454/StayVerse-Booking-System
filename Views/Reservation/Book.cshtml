@@ -133,26 +133,22 @@
         box-shadow: 0 10px 30px rgba(15,23,42,0.08);
     }
 
+    /* ===== Section Titles with SIMPLE ICONS (NO COLOR BOX) ===== */
     .section-title {
         font-size: 19px;
         font-weight: 700;
         margin-bottom: 22px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         color: #0f172a;
+        position: relative;
     }
 
         .section-title i {
+            font-size: 20px;
             color: #2563eb;
-            font-size: 16px;
-            background: #eff6ff;
-            width: 32px;
-            height: 32px;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-shrink: 0;
         }
 
     .form-group {
@@ -416,6 +412,7 @@
         top: 20px;
     }
 
+    /* ===== Info Card Header with SIMPLE ICON (NO COLOR BOX) ===== */
     .info-card-header {
         text-align: center;
         padding-bottom: 18px;
@@ -423,25 +420,19 @@
         border-bottom: 2px solid #f0f0f0;
     }
 
-    .info-card-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        margin: 0 auto 12px;
-    }
+        .info-card-header i {
+            font-size: 36px;
+            color: #2563eb;
+            display: block;
+            margin: 0 auto 10px;
+        }
 
-    .info-card h3 {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 6px;
-        color: #0f172a;
-    }
+        .info-card-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
 
     .info-text {
         font-size: 13.5px;
@@ -514,40 +505,76 @@
 
     /* ===== Responsive ===== */
     @@media (max-width: 900px) {
-        .booking-wrapper {
-            grid-template-columns: 1fr;
-            margin-top: -30px;
+        .booking-wrapper
+
+    {
+        grid-template-columns: 1fr;
+        margin-top: -30px;
+    }
+
+    .row, .row-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-hero {
+        padding: 40px 16px 110px;
+    }
+
+    .property-summary {
+        flex-direction: column;
+        text-align: center;
+    }
+
+        .property-summary img {
+            width: 100%;
+            height: 150px;
         }
 
-        .row, .row-3 {
-            grid-template-columns: 1fr;
+    .room-option {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .section-title {
+        font-size: 17px;
+    }
+
+        .section-title i {
+            font-size: 18px;
         }
 
-        .booking-hero {
-            padding: 40px 16px 110px;
+    }
+
+    @@media (max-width: 480px) {
+        .card
+
+    {
+        padding: 20px;
+    }
+
+    .booking-hero h1 {
+        font-size: 24px;
+    }
+
+    .section-title {
+        font-size: 15px;
+    }
+
+        .section-title i {
+            font-size: 16px;
         }
 
-        .property-summary {
-            flex-direction: column;
-            text-align: center;
-        }
+    .info-card-header i {
+        font-size: 28px;
+    }
 
-            .property-summary img {
-                width: 100%;
-                height: 150px;
-            }
-
-        .room-option {
-            flex-direction: column;
-            text-align: center;
-            gap: 8px;
-        }
     }
 </style>
 
 <!-- ===== Hero / Header ===== -->
 <section class="booking-hero">
-    <h1>Book Your Stay</h1>
+    <h1>🏨 Book Your Stay</h1>
     <p>Complete your booking at @Model?.PropertyName</p>
 
     <div class="steps-indicator">
@@ -605,17 +632,21 @@
                 <input type="hidden" asp-for="PropertyLocation" />
                 <input type="hidden" asp-for="PricePerNight" />
 
-                <h2 class="section-title"><i class="fa-regular fa-calendar"></i> When would you like to stay?</h2>
+                <!-- ✅ SECTION 1: When would you like to stay? - Simple Icon -->
+                <h2 class="section-title">
+                    <i class="fa-regular fa-calendar"></i>
+                    When would you like to stay?
+                </h2>
 
                 <div class="row">
                     <div class="form-group">
                         <label class="form-label">Check-In Date <span style="color:#dc2626">*</span></label>
-                        <input type="date" class="form-control" asp-for="CheckInDate" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <input type="date" class="form-control" asp-for="CheckInDate" required min="@DateTime.Now.ToString("yyyy-MM-dd")" id="CheckInDate" />
                         <span asp-validation-for="CheckInDate" class="validation-message"></span>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Check-Out Date <span style="color:#dc2626">*</span></label>
-                        <input type="date" class="form-control" asp-for="CheckOutDate" required min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" />
+                        <input type="date" class="form-control" asp-for="CheckOutDate" required min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" id="CheckOutDate" />
                         <span asp-validation-for="CheckOutDate" class="validation-message"></span>
                     </div>
                 </div>
@@ -623,7 +654,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label class="form-label">Number of Guests <span style="color:#dc2626">*</span></label>
-                        <select class="form-control" asp-for="NumberOfGuests">
+                        <select class="form-control" asp-for="NumberOfGuests" id="NumberOfGuests">
                             @for (int i = 1; i <= 10; i++)
                             {
                                 <option value="@i">@i @(i == 1 ? "Guest" : "Guests")</option>
@@ -633,7 +664,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Number of Rooms <span style="color:#dc2626">*</span></label>
-                        <select class="form-control" asp-for="NumberOfRooms">
+                        <select class="form-control" asp-for="NumberOfRooms" id="NumberOfRooms">
                             @for (int i = 1; i <= 5; i++)
                             {
                                 <option value="@i">@i @(i == 1 ? "Room" : "Rooms")</option>
@@ -645,7 +676,11 @@
 
                 <hr class="divider-line" />
 
-                <h2 class="section-title"><i class="fa-regular fa-bed"></i> Select Room Type</h2>
+                <!-- ✅ SECTION 2: Select Room Type - Simple Icon -->
+                <h2 class="section-title">
+                    <i class="fa-regular fa-bed"></i>
+                    Select Room Type
+                </h2>
 
                 @if (Model.RoomTypes != null && Model.RoomTypes.Any())
                 {
@@ -662,7 +697,12 @@
                         }
                     </div>
                     <input type="hidden" asp-for="SelectedRoomTypeId" id="selectedRoomType" />
-                    <span asp-validation-for="SelectedRoomTypeId" class="validation-message"></span>
+                    @if (Model.SelectedRoomTypeId.HasValue)
+                    {
+                        <div style="color: #16a34a; font-size: 14px; margin-top: -10px; margin-bottom: 16px;">
+                            ✅ Selected: <strong>@Model.RoomTypes?.FirstOrDefault(r => r.Value == Model.SelectedRoomTypeId.Value.ToString())?.Text</strong>
+                        </div>
+                    }
                 }
                 else
                 {
@@ -671,7 +711,11 @@
 
                 <hr class="divider-line" />
 
-                <h2 class="section-title"><i class="fa-regular fa-user"></i> Your Details</h2>
+                <!-- ✅ SECTION 3: Your Details - Simple Icon -->
+                <h2 class="section-title">
+                    <i class="fa-regular fa-user"></i>
+                    Your Details
+                </h2>
 
                 <div class="row">
                     <div class="form-group">
@@ -697,7 +741,17 @@
                         <input type="text" class="form-control" asp-for="Country" placeholder="Your country" />
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label">City <span style="color:#dc2626">*</span></label>
+                        <input type="tel" class="form-control" asp-for="City" placeholder="Your City" required />
+                        <span asp-validation-for="City" class="validation-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-control" asp-for="Address" placeholder="Your address" />
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="form-label">Special Requests</label>
                     <input type="text" class="form-control" asp-for="SpecialRequests" placeholder="Any special requests?" />
@@ -706,12 +760,12 @@
                 <!-- Total Price Display -->
                 <div style="background: #f8fafc; padding: 16px 20px; border-radius: 12px; margin: 16px 0;">
                     <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6b7280;">
-                        <span>@(Model.PricePerNight.ToString("C")) x <span id="nightCount">2</span> nights</span>
-                        <span id="subtotal">@((Model.PricePerNight * 2).ToString("C"))</span>
+                        <span>@(Model.PricePerNight.ToString("C")) x <span id="nightCount">1</span> night(s)</span>
+                        <span id="subtotal">@(Model.PricePerNight.ToString("C"))</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; color: #0f172a; border-top: 1px solid #e5e7eb; padding-top: 12px; margin-top: 8px;">
                         <span>Total</span>
-                        <span id="totalPrice">@((Model.PricePerNight * 2).ToString("C"))</span>
+                        <span id="totalPrice">@(Model.PricePerNight.ToString("C"))</span>
                     </div>
                 </div>
 
@@ -732,8 +786,9 @@
 
     <!-- Right: Info / Chat prompt -->
     <div class="card info-card">
+        <!-- ✅ INFO CARD HEADER WITH SIMPLE ICON (NO COLOR BOX) -->
         <div class="info-card-header">
-            <div class="info-card-icon"><i class="fa-solid fa-robot"></i></div>
+            <i class="fa-solid fa-robot"></i>
             <h3>Need help?</h3>
         </div>
         <p class="info-text">
@@ -763,7 +818,142 @@
 </div>
 
 <script>
-    // Calculate total price when dates change
+    // ========================================
+    // PAGE LOAD - SETUP
+    // ========================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set dates
+        const checkInInput = document.getElementById('CheckInDate');
+        const checkOutInput = document.getElementById('CheckOutDate');
+
+        if (checkInInput && checkOutInput) {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            checkInInput.value = todayStr;
+
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            checkOutInput.value = tomorrowStr;
+            checkOutInput.min = tomorrowStr;
+
+            calculateTotal();
+        }
+
+        // Auto-select first room
+        autoSelectFirstRoom();
+    });
+
+    // ========================================
+    // AUTO-SELECT FIRST ROOM
+    // ========================================
+    function autoSelectFirstRoom() {
+        const firstRoom = document.querySelector('.room-option');
+        if (firstRoom) {
+            firstRoom.classList.add('selected');
+
+            const onclickAttr = firstRoom.getAttribute('onclick');
+            if (onclickAttr) {
+                const match = onclickAttr.match(/'([^']+)'/);
+                if (match && match[1]) {
+                    const roomId = match[1];
+                    let roomField = document.getElementById('SelectedRoomTypeId');
+                    if (!roomField) {
+                        roomField = document.getElementById('selectedRoomType');
+                    }
+                    if (roomField) {
+                        roomField.value = roomId;
+                    }
+                }
+            }
+        }
+    }
+
+    // ========================================
+    // ✅ CALCULATE TOTAL PRICE (FIXED)
+    // ========================================
+    function calculateTotal() {
+        const checkIn = document.getElementById('CheckInDate');
+        const checkOut = document.getElementById('CheckOutDate');
+        const guestsSelect = document.getElementById('NumberOfGuests');
+        const roomsSelect = document.getElementById('NumberOfRooms');
+
+        const pricePerNight = @(Model?.PricePerNight ?? 0);
+
+        if (checkIn && checkOut && checkIn.value && checkOut.value) {
+            const start = new Date(checkIn.value + 'T00:00:00');
+            const end = new Date(checkOut.value + 'T00:00:00');
+
+            if (end > start && pricePerNight > 0) {
+                // ✅ Calculate nights
+                const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+                // ✅ Get number of rooms (default to 1)
+                let numberOfRooms = 1;
+                if (roomsSelect) {
+                    numberOfRooms = parseInt(roomsSelect.value) || 1;
+                }
+
+                // ✅ Get number of guests (for extra charges)
+                let numberOfGuests = 2;
+                if (guestsSelect) {
+                    numberOfGuests = parseInt(guestsSelect.value) || 2;
+                }
+
+                // ✅ Calculate base price (price per night × nights × rooms)
+                let total = pricePerNight * nights * numberOfRooms;
+
+                // ✅ Add extra guest charges (if more than 2 guests)
+                if (numberOfGuests > 2) {
+                    const extraGuests = numberOfGuests - 2;
+                    const extraChargePerGuest = 20; // $20 per extra guest per night
+                    total += extraGuests * extraChargePerGuest * nights * numberOfRooms;
+                }
+
+                // ✅ Update display
+                const nightCount = document.getElementById('nightCount');
+                const subtotal = document.getElementById('subtotal');
+                const totalPrice = document.getElementById('totalPrice');
+
+                if (nightCount) nightCount.textContent = nights;
+
+                const formattedTotal = total.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                });
+
+                if (subtotal) subtotal.textContent = formattedTotal;
+                if (totalPrice) totalPrice.textContent = formattedTotal;
+
+                // ✅ Also update the button text if it exists
+                const confirmBtn = document.getElementById('confirmBtn');
+                if (confirmBtn) {
+                    confirmBtn.innerHTML = `<i class="fa-regular fa-calendar-check"></i> Confirm Booking • ${formattedTotal}`;
+                }
+            }
+        }
+    }
+
+    // ========================================
+    // ROOM SELECTION
+    // ========================================
+    function selectRoom(element, roomTypeId) {
+        document.querySelectorAll('.room-option').forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+
+        let roomField = document.getElementById('SelectedRoomTypeId');
+        if (!roomField) {
+            roomField = document.getElementById('selectedRoomType');
+        }
+
+        if (roomField) {
+            roomField.value = roomTypeId;
+        }
+    }
+
+    // ========================================
+    // EVENT LISTENERS
+    // ========================================
     document.querySelectorAll('#CheckInDate, #CheckOutDate').forEach(input => {
         input.addEventListener('change', calculateTotal);
         input.addEventListener('input', calculateTotal);
@@ -772,51 +962,18 @@
     document.querySelector('#NumberOfGuests')?.addEventListener('change', calculateTotal);
     document.querySelector('#NumberOfRooms')?.addEventListener('change', calculateTotal);
 
-    function calculateTotal() {
-        const checkIn = new Date(document.getElementById('CheckInDate')?.value);
-        const checkOut = new Date(document.getElementById('CheckOutDate')?.value);
-        const pricePerNight = @(Model?.PricePerNight ?? 0);
-
-        if (checkIn && checkOut && checkOut > checkIn && pricePerNight > 0) {
-            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-            const total = pricePerNight * nights;
-
-            document.getElementById('nightCount').textContent = nights;
-            document.getElementById('subtotal').textContent = total.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            });
-            document.getElementById('totalPrice').textContent = total.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            });
-        }
-    }
-
-    // Room selection
-    function selectRoom(element, roomTypeId) {
-        document.querySelectorAll('.room-option').forEach(opt => opt.classList.remove('selected'));
-        element.classList.add('selected');
-        document.getElementById('SelectedRoomTypeId').value = roomTypeId;
-    }
-
-    // Select first room by default
-    document.addEventListener('DOMContentLoaded', function() {
-        const firstRoom = document.querySelector('.room-option');
-        if (firstRoom) {
-            firstRoom.classList.add('selected');
-            const roomId = firstRoom.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
-            if (roomId) {
-                document.getElementById('SelectedRoomTypeId').value = roomId;
-            }
-        }
-        calculateTotal();
-    });
-
-    // Form validation
+    // ========================================
+    // FORM SUBMIT VALIDATION
+    // ========================================
     document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
-        const selectedRoom = document.getElementById('SelectedRoomTypeId').value;
-        if (!selectedRoom) {
+        let roomField = document.getElementById('SelectedRoomTypeId');
+        if (!roomField) {
+            roomField = document.getElementById('selectedRoomType');
+        }
+
+        const selectedRoom = roomField ? roomField.value : null;
+
+        if (!selectedRoom || selectedRoom === '') {
             e.preventDefault();
             alert('Please select a room type.');
             return false;
@@ -824,16 +981,22 @@
         return true;
     });
 
-    // Date validation
+    // ========================================
+    // DATE VALIDATION
+    // ========================================
     document.getElementById('CheckInDate')?.addEventListener('change', function() {
         const checkOut = document.getElementById('CheckOutDate');
-        if (checkOut && checkOut.value && checkOut.value <= this.value) {
-            const nextDay = new Date(this.value);
-            nextDay.setDate(nextDay.getDate() + 1);
-            checkOut.value = nextDay.toISOString().split('T')[0];
-        }
         if (checkOut) {
-            checkOut.min = this.value;
+            const checkInDate = new Date(this.value + 'T00:00:00');
+            const minCheckOut = new Date(checkInDate);
+            minCheckOut.setDate(minCheckOut.getDate() + 1);
+            const minStr = minCheckOut.toISOString().split('T')[0];
+            checkOut.min = minStr;
+
+            if (checkOut.value && checkOut.value <= this.value) {
+                checkOut.value = minStr;
+            }
+            calculateTotal();
         }
     });
 </script>

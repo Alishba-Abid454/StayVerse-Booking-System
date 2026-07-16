@@ -378,7 +378,7 @@
     .right-column {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 28px;
     }
 
     /* ===== Availability Card ===== */
@@ -396,7 +396,7 @@
             font-size: 20px;
             font-weight: 700;
             color: #003b6f;
-            margin-bottom: 18px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -414,81 +414,85 @@
         .availability-card .sub {
             font-size: 14px;
             color: #6b7280;
-            margin-bottom: 14px;
+            margin-bottom: 20px;
         }
 
-        .availability-card .date-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 14px;
+    /* Date Inputs - Row Layout */
+    .date-inputs-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .date-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+        .date-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
         }
 
-            .availability-card .date-inputs .date-group {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .availability-card .date-inputs label {
-                font-size: 13px;
-                font-weight: 600;
-                color: #4b5563;
-            }
-
-            .availability-card .date-inputs input {
-                padding: 12px 14px;
-                border: 1.5px solid #d1d5db;
-                border-radius: 6px;
-                font-size: 15px;
-                width: 100%;
-                transition: border-color 0.2s;
-            }
-
-                .availability-card .date-inputs input:focus {
-                    outline: none;
-                    border-color: #0066d9;
-                    box-shadow: 0 0 0 3px rgba(0, 102, 217, 0.1);
-                }
-
-        .availability-card .guest-select {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
+        .date-group input {
+            padding: 12px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+            width: 100%;
+            transition: border-color 0.2s;
+            background: white;
         }
 
-            .availability-card .guest-select .guest-group {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
+            .date-group input:focus {
+                outline: none;
+                border-color: #0066d9;
+                box-shadow: 0 0 0 3px rgba(0, 102, 217, 0.1);
             }
 
-            .availability-card .guest-select label {
-                font-size: 13px;
-                font-weight: 600;
-                color: #4b5563;
+    /* Guest Selection - Row Layout */
+    .guest-select-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .guest-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+        .guest-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .guest-group select {
+            padding: 12px 10px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            background: white;
+            transition: border-color 0.2s;
+            appearance: auto;
+        }
+
+            .guest-group select:focus {
+                outline: none;
+                border-color: #0066d9;
+                box-shadow: 0 0 0 3px rgba(0, 102, 217, 0.1);
             }
 
-            .availability-card .guest-select select {
-                padding: 12px 14px;
-                border: 1.5px solid #d1d5db;
-                border-radius: 6px;
-                font-size: 14px;
-                flex: 1;
-                background: white;
-                transition: border-color 0.2s;
-            }
-
-                .availability-card .guest-select select:focus {
-                    outline: none;
-                    border-color: #0066d9;
-                    box-shadow: 0 0 0 3px rgba(0, 102, 217, 0.1);
-                }
-
-    /* Availability Status Messages */
+    /* Availability Status */
     .availability-status {
-        padding: 12px 16px;
+        padding: 14px 18px;
         border-radius: 8px;
         margin-bottom: 16px;
         font-size: 14px;
@@ -520,35 +524,13 @@
             margin-right: 8px;
         }
 
-    .btn-search-rooms {
-        width: 100%;
-        padding: 16px;
-        background: #0066d9;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-weight: 700;
-        font-size: 17px;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-
-        .btn-search-rooms:hover {
-            background: #0052b3;
-        }
-
-        .btn-search-rooms:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-        }
-
     /* Total Price Display */
     .total-price-display {
         background: #f0fdf4;
         border: 2px solid #86efac;
         border-radius: 8px;
         padding: 16px;
-        margin-top: 16px;
+        margin-bottom: 16px;
         display: none;
         text-align: center;
     }
@@ -574,6 +556,45 @@
             margin-top: 4px;
         }
 
+    /* Book Now Button */
+    .btn-search-rooms {
+        width: 100%;
+        padding: 16px;
+        background: #0066d9;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 17px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+        .btn-search-rooms:hover {
+            background: #0052b3;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-search-rooms:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+    /* Property Info - Bottom of card */
+    .property-info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
     /* ===== Room Types ===== */
     .room-types {
         background: white;
@@ -586,7 +607,7 @@
             font-size: 18px;
             font-weight: 700;
             color: #003b6f;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
     .room-item {
@@ -643,6 +664,8 @@
 
         .btn-show-price:hover {
             background: #0052b3;
+            color: white;
+            text-decoration: none;
         }
 
     /* ===== Error/Not Found ===== */
@@ -778,8 +801,20 @@
             padding: 20px;
         }
 
-        .availability-card .guest-select {
+        .date-inputs-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .guest-select-row {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .property-info {
             flex-direction: column;
+            gap: 4px;
+            align-items: center;
         }
     }
 
@@ -818,20 +853,29 @@
                 padding: 4px 12px;
             }
 
-        .availability-card .guest-select {
-            flex-direction: column;
+        .guest-select-row {
+            grid-template-columns: 1fr;
         }
 
-            .availability-card .guest-select .guest-group {
-                width: 100%;
-            }
+        .availability-card {
+            padding: 16px;
+        }
+
+        .total-price-display .price-amount {
+            font-size: 24px;
+        }
+
+        .btn-search-rooms {
+            font-size: 15px;
+            padding: 14px;
+        }
     }
 </style>
 
 @if (Model != null)
 {
     var checkInDate = DateTime.Now;
-    var checkOutDate = DateTime.Now.AddDays(2);
+    var checkOutDate = DateTime.Now.AddDays(1);
     var nights = (checkOutDate - checkInDate).Days;
 
     <div class="details-wrapper">
@@ -996,10 +1040,10 @@
                         Availability
                         <span class="badge">Check Rates</span>
                     </h2>
-                    <div class="sub">Select dates to see this property's availability and prices</div>
+                    <div class="sub">Select dates and guests to check availability (Max @Model.MaxGuests guests)</div>
 
-                    <!-- Date Inputs -->
-                    <div class="date-inputs">
+                    <!-- Date Inputs - Row Layout -->
+                    <div class="date-inputs-row">
                         <div class="date-group">
                             <label for="checkin">📅 Check-in Date</label>
                             <input type="date" id="checkin" value="@checkInDate.ToString("yyyy-MM-dd")" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
@@ -1010,42 +1054,37 @@
                         </div>
                     </div>
 
-                    <!-- Night Count Display -->
-                    <div style="text-align: center; margin-bottom: 14px; font-size: 14px; color: #6b7280;">
-                        <span id="nightCount">@nights</span> night(s)
-                    </div>
-
-                    <!-- Guest Selection -->
-                    <div class="guest-select">
+                    <!-- Guest Selection - Row Layout -->
+                    <div class="guest-select-row">
                         <div class="guest-group">
                             <label for="adults">👤 Adults</label>
                             <select id="adults">
-                                <option value="1">1 adult</option>
-                                <option value="2" selected>2 adults</option>
-                                <option value="3">3 adults</option>
-                                <option value="4">4 adults</option>
-                                <option value="5">5 adults</option>
-                                <option value="6">6 adults</option>
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
                             </select>
                         </div>
                         <div class="guest-group">
                             <label for="children">👶 Children</label>
                             <select id="children">
-                                <option value="0" selected>0 children</option>
-                                <option value="1">1 child</option>
-                                <option value="2">2 children</option>
-                                <option value="3">3 children</option>
-                                <option value="4">4 children</option>
+                                <option value="0" selected>0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
                             </select>
                         </div>
                         <div class="guest-group">
                             <label for="rooms">🛏️ Rooms</label>
                             <select id="rooms">
-                                <option value="1" selected>1 room</option>
-                                <option value="2">2 rooms</option>
-                                <option value="3">3 rooms</option>
-                                <option value="4">4 rooms</option>
-                                <option value="5">5 rooms</option>
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
                             </select>
                         </div>
                     </div>
@@ -1063,38 +1102,10 @@
                         <div class="price-detail">Includes taxes & fees</div>
                     </div>
 
-                    <!-- Book Now Button -->
                     <a href="@Url.Action("Book", "Reservation", new { propertyId = Model.Id })" class="btn-search-rooms" id="bookNowBtn">
-                        🏨 Check Availability
+                        🏨 Book Now
                     </a>
-                    <p>Property ID: @Model.Id</p>
-                    <p>Room Types Count: @(Model.RoomTypes?.Count() ?? 0)</p>
                 </div>
-
-                <!-- Room Types -->
-                @if (Model.RoomTypes != null && Model.RoomTypes.Any())
-                {
-                    <div class="room-types">
-                        <h2>Room types</h2>
-
-                        @foreach (var room in Model.RoomTypes)
-                        {
-                            <div class="room-item">
-                                <div class="room-info">
-                                    <div class="room-name">@room.Name</div>
-                                    <div class="room-bed">@room.BedType · @room.MaxGuests guests</div>
-                                </div>
-                                <div class="room-price">
-                                    <div class="price">$@room.PricePerNight</div>
-                                    <div class="per-night">/ night</div>
-                                    <a href="@Url.Action("Book", "Reservation", new { propertyId = Model.Id, roomTypeId = room.Id })" class="btn-show-price">
-                                        Book Now
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                }
             </div>
         </div>
     </div>
@@ -1117,13 +1128,15 @@ else
     // Get DOM elements
     const checkinInput = document.getElementById('checkin');
     const checkoutInput = document.getElementById('checkout');
-    const nightCountSpan = document.getElementById('nightCount');
     const totalNightsSpan = document.getElementById('totalNights');
     const totalAmountSpan = document.getElementById('totalAmount');
     const totalPriceDisplay = document.getElementById('totalPriceDisplay');
     const bookNowBtn = document.getElementById('bookNowBtn');
     const availabilityStatus = document.getElementById('availabilityStatus');
     const statusMessage = document.getElementById('statusMessage');
+
+    // ✅ GET PROPERTY MAX GUESTS
+    const propertyMaxGuests = @(Model?.MaxGuests ?? 0);
 
     // Set minimum dates
     const today = new Date();
@@ -1168,19 +1181,21 @@ else
             const nextDayStr = nextDay.toISOString().split('T')[0];
             checkoutInput.min = nextDayStr;
 
-            // If checkout is before or equal to checkin, auto-update
             if (checkoutInput.value && checkoutInput.value <= checkin) {
                 checkoutInput.value = nextDayStr;
             }
         }
     }
 
-    // Update availability and price
+    // ✅ UPDATE AVAILABILITY WITH MAX GUESTS VALIDATION
     function updateAvailability() {
         const checkin = checkinInput.value;
         const checkout = checkoutInput.value;
+        const adults = parseInt(document.getElementById('adults').value);
+        const children = parseInt(document.getElementById('children').value);
+        const rooms = parseInt(document.getElementById('rooms').value);
+        const totalGuests = adults + children;
 
-        // Check if dates are valid
         if (!checkin || !checkout) {
             availabilityStatus.className = 'availability-status';
             availabilityStatus.style.display = 'none';
@@ -1190,102 +1205,81 @@ else
             return;
         }
 
-        // Validate: Checkout must be after Checkin
         if (!isValidDates(checkin, checkout)) {
             availabilityStatus.className = 'availability-status unavailable';
             availabilityStatus.style.display = 'block';
-            statusMessage.innerHTML = '⚠️ Check-out date must be after check-in date';
+            statusMessage.innerHTML = '⚠️ Check-out must be after check-in';
             totalPriceDisplay.className = 'total-price-display';
             bookNowBtn.textContent = '🏨 Check Availability';
-            bookNowBtn.href = '@Url.Action("Book", "Reservation", new { propertyId = Model.Id })';
-
-            // Update night count
-            nightCountSpan.textContent = '0';
-            totalNightsSpan.textContent = '0';
             return;
         }
 
         const nights = calculateNights(checkin, checkout);
 
-        // Validate: Minimum 1 night stay
         if (nights < 1) {
             availabilityStatus.className = 'availability-status unavailable';
             availabilityStatus.style.display = 'block';
             statusMessage.innerHTML = '⚠️ Minimum stay is 1 night';
             totalPriceDisplay.className = 'total-price-display';
             bookNowBtn.textContent = '🏨 Check Availability';
-            bookNowBtn.href = '@Url.Action("Book", "Reservation", new { propertyId = Model.Id })';
-            nightCountSpan.textContent = '0';
-            totalNightsSpan.textContent = '0';
             return;
         }
 
-        // Update night count
-        nightCountSpan.textContent = nights;
+        // ✅ MAIN FIX: Validate total guests against property max guests
+        if (propertyMaxGuests > 0 && totalGuests > propertyMaxGuests) {
+            availabilityStatus.className = 'availability-status unavailable';
+            availabilityStatus.style.display = 'block';
+            statusMessage.innerHTML = '⚠️ Maximum ' + propertyMaxGuests + ' guest(s) allowed. You selected ' + totalGuests + ' guest(s)';
+            totalPriceDisplay.className = 'total-price-display';
+            bookNowBtn.textContent = '🏨 Check Availability';
+            bookNowBtn.style.opacity = '0.6';
+            bookNowBtn.style.cursor = 'not-allowed';
+            return;
+        }
+
+        bookNowBtn.style.opacity = '1';
+        bookNowBtn.style.cursor = 'pointer';
+
         totalNightsSpan.textContent = nights;
 
-        // Show loading status
+        // Show loading
         availabilityStatus.className = 'availability-status loading';
         availabilityStatus.style.display = 'block';
-        statusMessage.innerHTML = '⏳ Checking availability...';
+        statusMessage.innerHTML = '⏳ Checking availability for ' + totalGuests + ' guest(s)...';
 
-        // Simulate availability check (replace with actual API call)
+        // Simulate check
         setTimeout(() => {
-            // Get base price from room types or use default
             const basePrice = @(Model.RoomTypes != null && Model.RoomTypes.Any() ? Model.RoomTypes.First().PricePerNight : 150);
-            const adults = parseInt(document.getElementById('adults').value);
-            const children = parseInt(document.getElementById('children').value);
-            const rooms = parseInt(document.getElementById('rooms').value);
 
-            // Calculate total (add $20 per extra adult beyond 2)
             const extraAdults = Math.max(0, adults - 2);
             const extraCharge = extraAdults * 20;
             const totalPerNight = basePrice + extraCharge;
             const total = totalPerNight * nights * rooms;
 
-            // Check maximum guests per room (assume max 4)
-            const maxGuestsPerRoom = 4;
-            const totalGuests = adults + children;
-            if (totalGuests > maxGuestsPerRoom * rooms) {
-                availabilityStatus.className = 'availability-status unavailable';
-                availabilityStatus.style.display = 'block';
-                statusMessage.innerHTML = '⚠️ Too many guests for selected rooms (max ' + (maxGuestsPerRoom * rooms) + ' guests)';
-                totalPriceDisplay.className = 'total-price-display';
-                bookNowBtn.textContent = '🏨 Check Availability';
-                return;
-            }
-
-            // Check if property has room types (availability)
             const hasRooms = @(Model.RoomTypes != null && Model.RoomTypes.Any() ? "true" : "false");
 
             if (hasRooms) {
                 availabilityStatus.className = 'availability-status available';
                 availabilityStatus.style.display = 'block';
-                statusMessage.innerHTML = '✅ Rooms available for selected dates!';
+                statusMessage.innerHTML = '✅ Available for ' + totalGuests + ' guest(s), ' + nights + ' night(s)';
 
-                // Show total price
                 totalAmountSpan.textContent = total.toFixed(2);
                 totalPriceDisplay.className = 'total-price-display show';
 
-                // Update booking button
-                const checkinFormatted = formatDate(checkin);
-                const checkoutFormatted = formatDate(checkout);
+                // ✅ Build booking URL with all parameters
                 bookNowBtn.textContent = '📅 Book Now • $' + total.toFixed(2);
                 bookNowBtn.href = '@Url.Action("Book", "Reservation", new { propertyId = Model.Id })' +
-                    '?checkin=' + checkin +
+                    '&checkin=' + checkin +
                     '&checkout=' + checkout +
                     '&adults=' + adults +
                     '&children=' + children +
                     '&rooms=' + rooms;
             } else {
-               availabilityStatus.className = 'availability-status unavailable';
-               statusMessage.innerHTML = '❌ No rooms available for this property';
-
-                // availabilityStatus.className = 'availability-status unavailable';
-                // availabilityStatus.style.display = 'block';
-                // statusMessage.innerHTML = '❌ No rooms available for this property';
-                // totalPriceDisplay.className = 'total-price-display';
-                // bookNowBtn.textContent = '🏨 Check Availability';
+                availabilityStatus.className = 'availability-status unavailable';
+                availabilityStatus.style.display = 'block';
+                statusMessage.innerHTML = '❌ No rooms available';
+                totalPriceDisplay.className = 'total-price-display';
+                bookNowBtn.textContent = '🏨 Check Availability';
             }
         }, 500);
     }
@@ -1298,11 +1292,9 @@ else
 
     // Event: Check-out changes
     checkoutInput.addEventListener('change', function() {
-        // Validate checkout is after checkin
         const checkin = checkinInput.value;
         const checkout = checkoutInput.value;
         if (checkin && checkout && checkout <= checkin) {
-            // Auto-correct: set checkout to next day
             const nextDay = new Date(checkin + 'T00:00:00');
             nextDay.setDate(nextDay.getDate() + 1);
             checkoutInput.value = nextDay.toISOString().split('T')[0];
@@ -1323,6 +1315,9 @@ else
     bookNowBtn.addEventListener('click', function(e) {
         const checkin = checkinInput.value;
         const checkout = checkoutInput.value;
+        const adults = parseInt(document.getElementById('adults').value);
+        const children = parseInt(document.getElementById('children').value);
+        const totalGuests = adults + children;
 
         if (!checkin || !checkout) {
             e.preventDefault();
@@ -1340,6 +1335,13 @@ else
         if (nights < 1) {
             e.preventDefault();
             alert('Minimum stay is 1 night.');
+            return;
+        }
+
+        // ✅ Validate guests against max guests
+        if (propertyMaxGuests > 0 && totalGuests > propertyMaxGuests) {
+            e.preventDefault();
+            alert('Maximum ' + propertyMaxGuests + ' guest(s) allowed for this property.');
             return;
         }
     });

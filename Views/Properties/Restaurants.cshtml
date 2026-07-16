@@ -1,26 +1,617 @@
 ﻿@model IEnumerable<Hotel_Booking_System.Models.ViewModels.PropertyViewModel>
 
-<h2>Restaurants</h2>
+@{
+    ViewData["Title"] = "Restaurants | StayVerse";
+}
 
-<div class="row">
-    @foreach (var item in Model)
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --primary-light: #dbeafe;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --bg-light: #f8fafc;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 2px 8px rgba(15,23,42,0.08);
+        --shadow-md: 0 8px 24px rgba(15,23,42,0.12);
+        --shadow-lg: 0 16px 40px rgba(15,23,42,0.15);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html, body {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: linear-gradient(135deg, var(--bg-light) 0%, #f1f5f9 100%);
+        color: var(--text-dark);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.6;
+    }
+
+    /* ===== Header Section ===== */
+    .restaurants-header {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+        color: white;
+        padding: 60px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .restaurants-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .restaurants-header::after {
+            content: "";
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+    .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .restaurants-header h1 {
+        font-size: 44px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        letter-spacing: -1px;
+    }
+
+    .restaurants-header p {
+        font-size: 18px;
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    /* ===== Search & Filter Bar ===== */
+    .search-filter-bar {
+        max-width: 1200px;
+        margin: -40px auto 40px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .search-container {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: var(--shadow-lg);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .search-input-group {
+        position: relative;
+    }
+
+        .search-input-group input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+            .search-input-group input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }
+
+            .search-input-group input::placeholder {
+                color: var(--text-muted);
+            }
+
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 16px;
+        pointer-events: none;
+    }
+
+    .filter-btn {
+        padding: 12px 24px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+        .filter-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+    /* ===== Restaurants Grid ===== */
+    .restaurants-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 80px;
+    }
+
+    .restaurants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+    }
+
+    /* ===== Restaurant Card ===== */
+    .restaurant-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid rgba(37, 99, 235, 0.05);
+    }
+
+        .restaurant-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(37, 99, 235, 0.15);
+        }
+
+    .restaurant-image {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--bg-light), #e2e8f0);
+    }
+
+        .restaurant-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+    .restaurant-card:hover .restaurant-image img {
+        transform: scale(1.08);
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(15,23,42,0.3) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .restaurant-card:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .rating-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255,255,255,0.95);
+        padding: 6px 12px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-dark);
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+    }
+
+    .star {
+        color: #fbbf24;
+        font-size: 12px;
+    }
+
+    /* ===== Card Body ===== */
+    .card-body-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .restaurant-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0 0 8px 0;
+        line-height: 1.3;
+    }
+
+    .restaurant-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+    }
+
+    .meta-icon {
+        color: var(--primary);
+        font-size: 14px;
+    }
+
+    .cuisine-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .cuisine-badge {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .price-range {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-top: auto;
+        margin-bottom: 16px;
+    }
+
+    .price-dots {
+        color: var(--primary);
+        font-weight: 700;
+    }
+
+    /* ===== Card Footer/Button ===== */
+    .card-footer-content {
+        padding: 0 20px 20px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-book {
+        flex: 1;
+        padding: 12px 16px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+        .btn-book,
+        .btn-book:hover,
+        .btn-book:focus,
+        .btn-book:active,
+        .btn-book:visited {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border: none;
+            box-shadow: none;
+            outline: none;
+        }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        grid-column: 1 / -1;
+    }
+
+    .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-size: 24px;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* ===== Responsive ===== */
+    @@media (max-width: 768px) {
+        .restaurants-header
+
     {
-        <div class="col-md-4">
-            <div class="card mb-3">
-                <img src="@item.ImageUrl" class="card-img-top" />
+        padding: 40px 20px;
+    }
 
-                <div class="card-body">
-                    <h5>@item.Name</h5>
-                    <p>@item.Location</p>
+    .restaurants-header h1 {
+        font-size: 32px;
+    }
 
-                    <a asp-controller="Reservation"
-                       asp-action="Book"
-                       asp-route-propertyId="@item.Id"
-                       class="btn btn-primary">
-                        Book Table
-                    </a>
+    .restaurants-header p {
+        font-size: 16px;
+    }
+
+    .search-container {
+        grid-template-columns: 1fr;
+    }
+
+    .restaurants-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+    }
+
+    .restaurant-image {
+        height: 180px;
+    }
+
+    .card-body-content {
+        padding: 16px;
+    }
+
+    .card-footer-content {
+        padding: 0 16px 16px;
+    }
+
+    }
+
+    @@media (max-width: 576px) {
+        .restaurants-header
+
+    {
+        padding: 30px 16px;
+    }
+
+    .restaurants-header h1 {
+        font-size: 26px;
+    }
+
+    .restaurants-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-input-group input {
+        padding: 10px 14px 10px 36px;
+        font-size: 14px;
+    }
+
+    .filter-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .restaurant-name {
+        font-size: 16px;
+    }
+
+    }
+
+    /* ===== Loading State ===== */
+    .loading-skeleton {
+        animation: shimmer 1.5s infinite;
+    }
+
+    @@keyframes shimmer {
+        0%
+
+    {
+        background-color: rgba(37, 99, 235, 0.1);
+    }
+
+    50% {
+        background-color: rgba(37, 99, 235, 0.15);
+    }
+
+    100% {
+        background-color: rgba(37, 99, 235, 0.1);
+    }
+
+    }
+
+    /* ===== Focus States ===== */
+    a:focus, button:focus {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+    }
+</style>
+
+<!-- ===== Header ===== -->
+<section class="restaurants-header">
+    <div class="header-content">
+        <h1>Discover Amazing Restaurants</h1>
+        <p>Find and book your perfect table instantly</p>
+    </div>
+</section>
+
+<!-- ===== Search & Filter ===== -->
+<div class="search-filter-bar">
+    <div class="search-container">
+        <div class="search-input-group">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text"
+                   id="searchInput"
+                   placeholder="Search by restaurant name, location, or cuisine..."
+                   autocomplete="off" />
+        </div>
+        <button class="filter-btn">
+            <i class="fa-solid fa-sliders"></i> Filters
+        </button>
+    </div>
+</div>
+
+<!-- ===== Restaurants Grid ===== -->
+<div class="restaurants-container">
+    @if (Model != null && Model.Any())
+    {
+        <div class="restaurants-grid">
+            @foreach (var restaurant in Model)
+            {
+                <div class="restaurant-card">
+                    <!-- Image Section -->
+                    <div class="restaurant-image">
+                        @if (!string.IsNullOrEmpty(restaurant.ImageUrl))
+                        {
+                            <img src="@restaurant.ImageUrl"
+                                 alt="@restaurant.Name"
+                                 loading="lazy" />
+                        }
+                        else
+                        {
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #dbeafe, #bfdbfe); display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-utensils" style="font-size: 48px; color: #2563eb; opacity: 0.5;"></i>
+                            </div>
+                        }
+                        <div class="image-overlay"></div>
+
+                        <!-- Rating Badge -->
+                        <div class="rating-badge">
+                            <span class="star">★</span>
+                            <span>4.8</span>
+                            <span style="color: #94a3b8;">(124)</span>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body-content">
+                        <h3 class="restaurant-name">@restaurant.Name</h3>
+
+                        <div class="restaurant-meta">
+                            <i class="fa-solid fa-location-dot meta-icon"></i>
+                            <span>@restaurant.Location</span>
+                        </div>
+
+                        <div class="cuisine-badges">
+                            <span class="cuisine-badge">Italian</span>
+                            <span class="cuisine-badge">Contemporary</span>
+                        </div>
+
+                        <div class="price-range">
+                            <span class="price-dots">$$$</span> Expensive
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="card-footer-content">
+                        <a asp-controller="Reservation"
+                           asp-action="Book"
+                           asp-route-propertyId="@restaurant.Id"
+                           class="btn-book">
+                            <i class="fa-solid fa-calendar-check"></i> Book Table
+                        </a>
+
+                    </div>
                 </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="restaurants-grid">
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <h3>No Restaurants Found</h3>
+                <p>Try adjusting your search or filters to find restaurants that match your preferences.</p>
             </div>
         </div>
     }
 </div>
+
+<script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.restaurant-card');
+
+            cards.forEach(card => {
+                const name = card.querySelector('.restaurant-name').textContent.toLowerCase();
+                const location = card.querySelector('.restaurant-meta').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || location.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                    setTimeout(() => card.style.opacity = '1', 0);
+                } else {
+                    card.style.opacity = '0.3';
+                    setTimeout(() => card.style.display = 'none', 300);
+                }
+            });
+        });
+    }
+
+    // Favorite button functionality
+    const favoriteButtons = document.querySelectorAll('.btn-favorite');
+    favoriteButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (this.classList.contains('active')) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                this.style.background = 'rgba(239, 68, 68, 0.1)';
+                this.style.color = '#ef4444';
+            } else {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                this.style.background = 'var(--bg-light)';
+                this.style.color = 'var(--text-muted)';
+            }
+        });
+    });
+</script>

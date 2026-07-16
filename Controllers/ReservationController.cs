@@ -17,17 +17,20 @@ namespace Hotel_Booking_System.Controllers
         private readonly IReservationService _reservationService;
         private readonly IPropertyService _propertyService;
         private readonly IRoomTypeService _roomTypeService;
+        private readonly IPaymentService _paymentService;
         private readonly UserManager<User> _userManager;
 
         public ReservationController(
             IReservationService reservationService,
             IPropertyService propertyService,
             IRoomTypeService roomTypeService,
+            IPaymentService paymentService,
             UserManager<User> userManager)
         {
             _reservationService = reservationService;
             _propertyService = propertyService;
             _roomTypeService = roomTypeService;
+            _paymentService = paymentService;
             _userManager = userManager;
         }
 
@@ -62,16 +65,65 @@ namespace Hotel_Booking_System.Controllers
                 return Forbid();
             }
 
+            // Check if payment exists
+            var payment = await _paymentService.GetPaymentByReservationIdAsync(id);
+            ViewBag.Payment = payment;
+
             return View(reservation);
         }
 
-        // GET: Reservation/Book/5
-        public async Task<IActionResult> Book(int propertyId)
+        [AllowAnonymous]
+        // GET: Reservation/Book
+        public async Task<IActionResult> Book(
+            int propertyId,
+            string? checkin = null,
+            string? checkout = null,
+            int adults = 2,
+            int children = 0,
+            int rooms = 1)
         {
             var property = await _propertyService.GetPropertyWithDetailsAsync(propertyId);
             if (property == null)
             {
                 return NotFound();
+            }
+
+            // ✅ Calculate total guests
+            int totalGuests = adults + children;
+
+            // ✅ Validate guests against property max guests
+            if (property.MaxGuests > 0 && totalGuests > property.MaxGuests)
+            {
+                TempData["Error"] = $"This property accepts a maximum of {property.MaxGuests} guest(s). You selected {totalGuests} guest(s).";
+                return RedirectToAction("Details", "Properties", new { id = propertyId });
+            }
+
+            // ✅ Parse dates from query parameters or use defaults
+            DateTime checkInDate;
+            DateTime checkOutDate;
+
+            if (!string.IsNullOrEmpty(checkin) && DateTime.TryParse(checkin, out var parsedCheckIn))
+            {
+                checkInDate = parsedCheckIn;
+            }
+            else
+            {
+                checkInDate = DateTime.Now.AddDays(1);
+            }
+
+            if (!string.IsNullOrEmpty(checkout) && DateTime.TryParse(checkout, out var parsedCheckOut))
+            {
+                checkOutDate = parsedCheckOut;
+            }
+            else
+            {
+                checkOutDate = checkInDate.AddDays(1);
+            }
+
+            // ✅ Ensure check-out is after check-in
+            if (checkOutDate <= checkInDate)
+            {
+                checkOutDate = checkInDate.AddDays(1);
             }
 
             var model = new BookingViewModel
@@ -81,16 +133,19 @@ namespace Hotel_Booking_System.Controllers
                 PropertyImage = property.ImageUrl,
                 PropertyType = property.Type,
                 PropertyLocation = property.Location,
-                CheckInDate = DateTime.Now.AddDays(1),
-                CheckOutDate = DateTime.Now.AddDays(3),
-                NumberOfGuests = 2,
-                NumberOfRooms = 1,
+
+                // ✅ Use values from query parameters
+                CheckInDate = checkInDate,
+                CheckOutDate = checkOutDate,
+                NumberOfGuests = totalGuests, // ✅ Total guests (adults + children)
+                NumberOfRooms = rooms > 0 ? rooms : 1,
                 PricePerNight = property.BasePrice,
                 RoomTypes = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>(),
                 AvailableRooms = property.RoomTypes ?? new List<RoomTypeViewModel>()
             };
 
-            if (property.RoomTypes != null)
+            // Populate room types
+            if (property.RoomTypes != null && property.RoomTypes.Count > 0)
             {
                 foreach (var room in property.RoomTypes)
                 {
@@ -100,17 +155,22 @@ namespace Hotel_Booking_System.Controllers
                         Text = $"{room.Name} - ${room.PricePerNight}/night (Max {room.MaxGuests} guests)"
                     });
                 }
+                model.SelectedRoomTypeId = property.RoomTypes.First().Id;
             }
 
+            // Pre-populate user info
             if (User.Identity.IsAuthenticated)
             {
                 var user = await _userManager.GetUserAsync(User);
-                model.FullName = $"{user.FirstName} {user.LastName}".Trim();
-                model.Email = user.Email;
-                model.PhoneNumber = user.PhoneNumber;
-                model.Country = user.Country;
-                model.City = user.City;
-                model.Address = user.Address;
+                if (user != null)
+                {
+                    model.FullName = $"{user.FirstName} {user.LastName}".Trim();
+                    model.Email = user.Email;
+                    model.PhoneNumber = user.PhoneNumber;
+                    model.Country = user.Country;
+                    model.City = user.City;
+                    model.Address = user.Address;
+                }
             }
 
             return View(model);
@@ -121,15 +181,43 @@ namespace Hotel_Booking_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Book(BookingViewModel model)
         {
-            // Validate room type selection
-            if (!model.SelectedRoomTypeId.HasValue || model.SelectedRoomTypeId.Value <= 0)
+            // Get property to validate guests
+            var property = await _propertyService.GetPropertyWithDetailsAsync(model.PropertyId);
+            if (property == null)
             {
-                ModelState.AddModelError("SelectedRoomTypeId", "Please select a room type.");
+                ModelState.AddModelError("", "Property not found.");
+                return View(model);
             }
+
+            // ✅ Validate total guests
+            if (property.MaxGuests > 0 && model.NumberOfGuests > property.MaxGuests)
+            {
+                ModelState.AddModelError("", $"This property accepts a maximum of {property.MaxGuests} guest(s). You selected {model.NumberOfGuests} guest(s).");
+            }
+
+            // Remove validation for display-only fields
+            ModelState.Remove("RoomTypes");
+            ModelState.Remove("AvailableRooms");
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(model.FullName))
+                ModelState.AddModelError(nameof(model.FullName), "Full Name is required.");
+
+            if (string.IsNullOrWhiteSpace(model.Email))
+                ModelState.AddModelError(nameof(model.Email), "Email is required.");
+
+            if (string.IsNullOrWhiteSpace(model.PhoneNumber))
+                ModelState.AddModelError(nameof(model.PhoneNumber), "Phone Number is required.");
+
+            if (!model.SelectedRoomTypeId.HasValue || model.SelectedRoomTypeId <= 0)
+                ModelState.AddModelError(nameof(model.SelectedRoomTypeId), "Please select a room type.");
+
+            if (model.CheckOutDate <= model.CheckInDate)
+                ModelState.AddModelError(nameof(model.CheckOutDate), "Check-out date must be after check-in date.");
 
             if (!ModelState.IsValid)
             {
-                var property = await _propertyService.GetPropertyWithDetailsAsync(model.PropertyId);
+                // Reload property data
                 if (property != null)
                 {
                     model.PropertyName = property.Name;
@@ -158,14 +246,17 @@ namespace Hotel_Booking_System.Controllers
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                // Create reservation
                 var reservation = await _reservationService.CreateReservationAsync(model, userId);
-                return RedirectToAction(nameof(Confirmation), new { id = reservation.Id });
+
+                // Redirect to Payment page
+                return RedirectToAction("Index", "Payment", new { reservationId = reservation.Id });
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError("", $"Error creating reservation: {ex.Message}");
 
-                var property = await _propertyService.GetPropertyWithDetailsAsync(model.PropertyId);
                 if (property != null)
                 {
                     model.PropertyName = property.Name;
@@ -207,6 +298,18 @@ namespace Hotel_Booking_System.Controllers
                 return Forbid();
             }
 
+            // Check if payment exists and is completed
+            var payment = await _paymentService.GetPaymentByReservationIdAsync(id);
+            if (payment != null && payment.Status == "Completed")
+            {
+                ViewBag.Payment = payment;
+                ViewBag.IsPaid = true;
+            }
+            else
+            {
+                ViewBag.IsPaid = false;
+            }
+
             return View(reservation);
         }
 
@@ -225,7 +328,6 @@ namespace Hotel_Booking_System.Controllers
                 return Forbid();
             }
 
-            // Check if cancellation is allowed
             if (!reservation.CanCancel)
             {
                 TempData["Error"] = "This reservation cannot be cancelled because it's within 24 hours of check-in or already checked out.";

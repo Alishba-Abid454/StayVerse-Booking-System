@@ -1,0 +1,845 @@
+﻿@model Hotel_Booking_System.Models.ViewModels.PaymentViewModel
+
+@{
+    ViewData["Title"] = "Complete Payment";
+    Layout = "_Layout";
+}
+
+<style>
+    /* ===== Animations ===== */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -200% center;
+        }
+
+        100% {
+            background-position: 200% center;
+        }
+    }
+
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    @@keyframes ringPulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+
+        100% {
+            transform: scale(1.4);
+            opacity: 0;
+        }
+    }
+
+    /* ===== Main Container ===== */
+    .payment-container {
+        max-width: 620px;
+        margin: 40px auto;
+        padding: 0 20px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .payment-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 24px;
+        padding: 44px 42px;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+        border: 1px solid rgba(37, 99, 235, 0.06);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* ===== Top Bar ===== */
+    .top-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #2563eb, #7c3aed, #ec4899, #2563eb);
+        background-size: 300% 100%;
+        animation: gradientMove 3s ease infinite;
+    }
+
+    @@keyframes gradientMove {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+
+    /* ========================================
+           ✅ LOGO / ICON SECTION
+           ======================================== */
+    .logo-section {
+        text-align: center;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .logo-wrapper {
+        display: inline-block;
+        position: relative;
+    }
+
+    .logo-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        box-shadow: 0 8px 40px rgba(37, 99, 235, 0.35);
+        position: relative;
+        transition: all 0.3s ease;
+        animation: float 3s ease-in-out infinite;
+    }
+
+        .logo-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 50px rgba(37, 99, 235, 0.45);
+        }
+
+        /* ✅ Brand Logo Inside */
+        .logo-icon .brand-logo {
+            font-size: 34px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            font-family: 'Playfair Display', serif;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+            .logo-icon .brand-logo i {
+                font-size: 28px;
+                margin-right: 2px;
+            }
+
+    /* ✅ Pulse Ring Effect */
+    .pulse-ring {
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border-radius: 50%;
+        border: 2px solid rgba(37, 99, 235, 0.15);
+        animation: ringPulse 2s ease-out infinite;
+    }
+
+        .pulse-ring:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+    /* ✅ Brand Name Below Logo */
+    .brand-name {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: 0.5px;
+    }
+
+        .brand-name span {
+            color: #2563eb;
+        }
+
+    .brand-tagline {
+        font-size: 11px;
+        color: #6b7280;
+        font-weight: 400;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* ===== Header ===== */
+    .payment-header {
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+        z-index: 1;
+    }
+
+        .payment-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .payment-header p {
+            color: #6b7280;
+            font-size: 14px;
+            -webkit-text-fill-color: initial;
+        }
+
+            .payment-header p i {
+                color: #10b981;
+                margin-right: 4px;
+            }
+
+    /* ===== Reservation Summary ===== */
+    .reservation-summary {
+        background: linear-gradient(135deg, #f1f5f9, #e8f0fe);
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(37, 99, 235, 0.08);
+        position: relative;
+        z-index: 1;
+    }
+
+        .reservation-summary .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+            .reservation-summary .row .label {
+                color: #6b7280;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .reservation-summary .row .label i {
+                    color: #2563eb;
+                    font-size: 14px;
+                }
+
+            .reservation-summary .row .value {
+                font-weight: 600;
+                color: #0f172a;
+            }
+
+        .reservation-summary .total {
+            border-top: 2px dashed #d1d5db;
+            padding-top: 12px;
+            margin-top: 8px;
+            font-size: 18px;
+        }
+
+            .reservation-summary .total .label {
+                font-size: 16px;
+            }
+
+            .reservation-summary .total .value {
+                color: #2563eb;
+                font-size: 22px;
+                font-weight: 800;
+            }
+
+    /* ===== Form ===== */
+    .form-group {
+        margin-bottom: 18px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 6px;
+    }
+
+        .form-label .required {
+            color: #dc2626;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 13px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+        color: #0f172a;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc2626;
+        }
+
+    .validation-message {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    /* ===== Payment Methods ===== */
+    .payment-methods {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    .payment-method-option {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+        position: relative;
+    }
+
+        .payment-method-option:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.08);
+        }
+
+        .payment-method-option.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.12);
+            transform: translateY(-2px);
+        }
+
+            .payment-method-option.selected::after {
+                content: '✓';
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                width: 24px;
+                height: 24px;
+                background: #2563eb;
+                color: white;
+                border-radius: 50%;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                border: 2px solid white;
+            }
+
+        .payment-method-option i {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .payment-method-option .method-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+    /* ===== Pay Button ===== */
+    .btn-pay {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+        .btn-pay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -200%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-pay:active {
+            transform: translateY(0px);
+        }
+
+        .btn-pay:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-pay .spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        .btn-pay.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-pay.loading .btn-text {
+            display: none;
+        }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ===== Secure Badge ===== */
+    .secure-badge {
+        text-align: center;
+        margin-top: 18px;
+        color: #6b7280;
+        font-size: 13px;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+        .secure-badge .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+            .secure-badge .badge-item i {
+                color: #10b981;
+            }
+
+            .secure-badge .badge-item .lock-icon {
+                color: #2563eb;
+            }
+
+    /* ===== Toast Error ===== */
+    .toast-error {
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+        .toast-error i {
+            font-size: 20px;
+            color: #dc2626;
+            margin-top: 2px;
+        }
+
+        .toast-error ul {
+            margin: 4px 0 0 0;
+            padding-left: 20px;
+        }
+
+    /* ===== Card Details Section ===== */
+    .card-details-section {
+        transition: all 0.3s ease;
+    }
+
+        .card-details-section.hidden {
+            display: none;
+        }
+
+    /* ===== Responsive ===== */
+    @@media (max-width: 600px) {
+        .payment-card {
+            padding: 28px 20px;
+        }
+
+        .row-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-methods {
+            flex-direction: column;
+        }
+
+        .payment-method-option {
+            min-width: auto;
+        }
+
+        .logo-icon {
+            width: 65px;
+            height: 65px;
+        }
+
+            .logo-icon .brand-logo {
+                font-size: 28px;
+            }
+
+                .logo-icon .brand-logo i {
+                    font-size: 22px;
+                }
+
+        .brand-name {
+            font-size: 14px;
+        }
+
+        .payment-header h1 {
+            font-size: 22px;
+        }
+
+        .reservation-summary .total .value {
+            font-size: 18px;
+        }
+
+        .btn-pay {
+            font-size: 16px;
+            padding: 16px;
+        }
+
+        .secure-badge {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+
+<div class="payment-container">
+    <div class="payment-card">
+        <!-- Top Bar -->
+        <div class="top-bar"></div>
+
+        <!-- ======================================== -->
+        <!-- ✅ LOGO / ICON SECTION (Above Header)    -->
+        <!-- ======================================== -->
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <!-- Pulse Rings -->
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
+
+                <!-- Main Logo Icon -->
+                <div class="logo-icon">
+                    <span class="brand-logo">
+                        <i class="fas fa-hotel"></i>SV
+                    </span>
+                </div>
+            </div>
+            <div class="brand-name">
+                Stay<span>Verse</span>
+                <div class="brand-tagline">✦ Secure Payment ✦</div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="payment-header">
+            <h1>Complete Payment</h1>
+            <p><i class="fas fa-lock"></i> Secure payment for your reservation</p>
+        </div>
+
+        <!-- Error Messages -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="toast-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <div>
+                    <strong>Please fix the following errors:</strong>
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        <!-- Reservation Summary -->
+        <div class="reservation-summary">
+            <div class="row">
+                <span class="label"><i class="fas fa-hashtag"></i> Reservation #</span>
+                <span class="value">@Model.ReservationNumber</span>
+            </div>
+            <div class="row total">
+                <span class="label"><i class="fas fa-money-bill-wave"></i> Amount Due</span>
+                <span class="value">@Model.Amount.ToString("C")</span>
+            </div>
+        </div>
+
+        <!-- Payment Form -->
+        <form asp-action="Process" method="post" id="paymentForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReservationId" />
+            <input type="hidden" asp-for="ReservationNumber" />
+            <input type="hidden" asp-for="Amount" />
+            <input type="hidden" asp-for="Currency" />
+
+            <!-- Payment Method -->
+            <div class="form-group">
+                <label class="form-label">Select Payment Method <span class="required">*</span></label>
+                <div class="payment-methods">
+                    <div class="payment-method-option selected" onclick="selectMethod(this, 'CreditCard')">
+                        <i class="fas fa-credit-card" style="color:#2563eb;"></i>
+                        <span class="method-name">Credit Card</span>
+                    </div>
+                    <div class="payment-method-option" onclick="selectMethod(this, 'PayPal')">
+                        <i class="fab fa-paypal" style="color:#003087;"></i>
+                        <span class="method-name">PayPal</span>
+                    </div>
+                    <div class="payment-method-option" onclick="selectMethod(this, 'Stripe')">
+                        <i class="fab fa-stripe" style="color:#6772e5;"></i>
+                        <span class="method-name">Stripe</span>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="PaymentMethod" id="selectedPaymentMethod" value="CreditCard" />
+                <span asp-validation-for="PaymentMethod" class="validation-message"></span>
+            </div>
+
+            <!-- Card Details -->
+            <div class="card-details-section" id="cardDetails">
+                <div class="form-group">
+                    <label class="form-label">Card Number <span class="required">*</span></label>
+                    <input type="text" class="form-control" placeholder="1234 5678 9012 3456" id="CardNumber" maxlength="19" />
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label class="form-label">Expiry Date <span class="required">*</span></label>
+                        <input type="text" class="form-control" placeholder="MM/YY" id="CardExpiry" maxlength="5" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CVV <span class="required">*</span></label>
+                        <input type="password" class="form-control" placeholder="•••" id="CardCvv" maxlength="4" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cardholder Name <span class="required">*</span></label>
+                    <input type="text" class="form-control" placeholder="John Doe" id="CardholderName" />
+                </div>
+            </div>
+
+            <!-- Billing Address -->
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-map-pin" style="color:#2563eb; margin-right:4px;"></i> Billing Address</label>
+                <input type="text" class="form-control" asp-for="BillingAddress" placeholder="Street address" />
+            </div>
+            <div class="row-2">
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-control" asp-for="BillingCity" placeholder="City" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Postal Code</label>
+                    <input type="text" class="form-control" asp-for="BillingPostalCode" placeholder="Postal code" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Country</label>
+                <input type="text" class="form-control" asp-for="BillingCountry" placeholder="Country" />
+            </div>
+
+            <!-- Pay Button -->
+            <button type="submit" class="btn-pay" id="payButton">
+                <span class="spinner"><i class="fas fa-spinner"></i></span>
+                <span class="btn-text"><i class="fas fa-lock" style="font-size:14px;"></i> Pay @Model.Amount.ToString("C")</span>
+            </button>
+        </form>
+
+        <!-- Secure Badge -->
+        <div class="secure-badge">
+            <span class="badge-item">
+                <i class="fas fa-lock lock-icon"></i> Secure & Encrypted
+            </span>
+            <span class="badge-item">
+                <i class="fas fa-check-circle"></i> Instant Confirmation
+            </span>
+            <span class="badge-item">
+                <i class="fas fa-shield-alt"></i> 100% Protected
+            </span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========================================
+    // PAYMENT METHOD SELECTION
+    // ========================================
+    function selectMethod(element, method) {
+        document.querySelectorAll('.payment-method-option').forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('selectedPaymentMethod').value = method;
+
+        const cardDetails = document.getElementById('cardDetails');
+        if (method === 'CreditCard') {
+            cardDetails.classList.remove('hidden');
+        } else {
+            cardDetails.classList.add('hidden');
+        }
+    }
+
+    // ========================================
+    // CARD INPUT FORMATTING
+    // ========================================
+    document.getElementById('CardNumber')?.addEventListener('input', function(e) {
+        let value = this.value.replace(/\D/g, '');
+        value = value.replace(/(.{4})/g, '$1 ').trim();
+        this.value = value;
+    });
+
+    document.getElementById('CardExpiry')?.addEventListener('input', function(e) {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        }
+        this.value = value;
+    });
+
+    document.getElementById('CardCvv')?.addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '');
+    });
+
+    // ========================================
+    // FORM SUBMISSION
+    // ========================================
+    document.getElementById('paymentForm')?.addEventListener('submit', function(e) {
+        const button = document.getElementById('payButton');
+        button.classList.add('loading');
+        button.disabled = true;
+
+        const method = document.getElementById('selectedPaymentMethod').value;
+        if (method === 'CreditCard') {
+            const cardNumber = document.getElementById('CardNumber')?.value.replace(/\s/g, '');
+            const expiry = document.getElementById('CardExpiry')?.value;
+            const cvv = document.getElementById('CardCvv')?.value;
+
+            if (!cardNumber || cardNumber.length < 16) {
+                e.preventDefault();
+                alert('Please enter a valid card number.');
+                button.classList.remove('loading');
+                button.disabled = false;
+                return;
+            }
+
+            if (!expiry || expiry.length < 5) {
+                e.preventDefault();
+                alert('Please enter a valid expiry date (MM/YY).');
+                button.classList.remove('loading');
+                button.disabled = false;
+                return;
+            }
+
+            if (!cvv || cvv.length < 3) {
+                e.preventDefault();
+                alert('Please enter a valid CVV.');
+                button.classList.remove('loading');
+                button.disabled = false;
+                return;
+            }
+        }
+    });
+</script>
