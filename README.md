@@ -6,7 +6,7 @@ The system also includes an **AI-powered chatbot** to assist users with their qu
 
 ---
 
-## ?? Project Overview
+## Project Overview
 
 StayVerse provides a centralized platform for managing hotel and restaurant bookings. It includes separate functionality for customers and administrators.
 
@@ -16,9 +16,9 @@ Administrators can manage properties, reservations, users, and other system data
 
 ---
 
-## ? Features
+## Features
 
-### ?? User Features
+### User Features
 
 - User registration and login
 - Secure authentication and authorization
@@ -30,7 +30,7 @@ Administrators can manage properties, reservations, users, and other system data
 - Check reservation status
 - AI-powered chatbot assistance
 
-### ??? Admin Features
+### Admin Features
 
 - Admin dashboard
 - Manage properties
@@ -44,13 +44,13 @@ Administrators can manage properties, reservations, users, and other system data
 - Monitor booking information
 - Manage system data
 
-### ?? AI Chatbot
+### AI Chatbot
 
 StayVerse includes an AI chatbot that helps users with booking-related questions and provides assistance while navigating the platform.
 
 ---
 
-## ??? Technology Stack
+## Technology Stack
 
 ### Backend
 - C#
@@ -80,40 +80,39 @@ StayVerse includes an AI chatbot that helps users with booking-related questions
 
 ---
 
-## ??? Project Structure
+## Project Structure
 
 ```text
 StayVerse-Booking-System/
-?
-??? Areas/
-?   ??? Identity/
-?       ??? Pages/
-?
-??? Controllers/
-?
-??? Data/
-?
-??? Hubs/
-?
-??? Models/
-?
-??? Services/
-?
-??? Views/
-?
-??? wwwroot/
-?   ??? css/
-?   ??? js/
-?   ??? images/
-?
-??? Properties/
-?
-??? Program.cs
-?
-??? appsettings.json
-?
-??? appsettings.Development.json
-?
-??? Hotel Booking System.csproj
-?
-??? Hotel Booking System.sln
+
+ Areas/
+    Identity/
+        Pages/
+
+ Controllers/
+
+ Data/
+
+ Hubs/
+
+ Models/
+
+ Services/
+
+ Views/
+ wwwroot/
+    css/
+    js/
+    images/
+
+ Properties/
+
+ Program.cs
+
+ appsettings.json
+
+ appsettings.Development.json
+
+ Hotel Booking System.csproj
+
+ Hotel Booking System.sln
