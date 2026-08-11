@@ -7,36 +7,206 @@
 }
 
 <style>
+    /* ===== Animations ===== */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    /* ===== Main Container ===== */
     .admin-wrapper {
-        max-width: 1200px;
-        margin: 40px auto;
+        width: 100%;
+        max-width: none;
+        margin: 20px 0;
         padding: 0 20px;
+        box-sizing: border-box;
     }
 
     .page-header {
+        width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
+        margin-bottom: 28px;
         flex-wrap: wrap;
         gap: 12px;
     }
 
-        .page-header h2 {
-            font-size: 26px;
-            font-weight: 700;
+        .page-header .title-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
+            .page-header .title-group .icon-wrapper {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                background: linear-gradient(135deg, #2563eb, #1d4ed8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+            }
+
+                .page-header .title-group .icon-wrapper i {
+                    font-size: 20px;
+                    color: white;
+                }
+
+        .page-header h2 {
+            font-size: 30px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+            .page-header h2 small {
+                font-size: 14px;
+                font-weight: 400;
+                color: #6b7280;
+                display: block;
+                margin-top: 2px;
+            }
+
+        .page-header .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+    /* ===== Buttons ===== */
+    .btn-primary {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+            color: white;
+        }
+
+    .btn-secondary {
+        padding: 12px 24px;
+        background: #6b7280;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    /* ===== Toast Messages ===== */
+    .toast-success {
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.3s ease;
+    }
+
+        .toast-success i {
+            font-size: 20px;
+        }
+
+    .toast-error {
+        padding: 14px 20px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.3s ease;
+    }
+
+        .toast-error i {
+            font-size: 20px;
+        }
+
+    /* ===== Filters Bar ===== */
     .filters-bar {
         background: white;
         border-radius: 16px;
-        padding: 18px 22px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 22px 26px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         display: grid;
         grid-template-columns: 1fr 1fr 1fr auto;
-        gap: 14px;
+        gap: 16px;
         align-items: end;
-        margin-bottom: 22px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
     }
 
     .form-label {
@@ -45,74 +215,189 @@
         font-weight: 600;
         color: #6b7280;
         text-transform: uppercase;
-        margin-bottom: 6px;
+        letter-spacing: 0.5px;
     }
+
+        .form-label i {
+            margin-right: 4px;
+            color: #2563eb;
+        }
 
     .form-control {
         width: 100%;
-        padding: 10px 14px;
-        border: 1.5px solid #e5e7eb;
+        padding: 11px 16px;
+        border: 2px solid #e5e7eb;
         border-radius: 10px;
         font-size: 14px;
+        transition: all 0.3s ease;
+        background: #fafbfc;
     }
 
         .form-control:focus {
             outline: none;
             border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+            background: white;
         }
 
     .btn-filter {
-        padding: 11px 18px;
-        background: #1a1a1a;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 13px;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-        .btn-filter:hover {
-            background: #374151;
-        }
-
-    .btn-primary {
-        padding: 12px 24px;
-        background: #2563eb;
+        padding: 12px 28px;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
         color: white;
         border: none;
         border-radius: 10px;
         font-weight: 600;
         font-size: 14px;
         cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        display: flex;
         align-items: center;
         gap: 8px;
-        transition: background 0.2s;
     }
 
-        .btn-primary:hover {
-            background: #1d4ed8;
-            color: white;
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.3);
         }
 
+    /* ===== Table Section ===== */
+    .admin-table-section {
+        background: white;
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .table-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .table-header .count-badge {
+            padding: 4px 16px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    th {
+        text-align: left;
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 14px 12px;
+        border-bottom: 2px solid #f1f5f9;
+        background: #fafbfc;
+    }
+
+        th i {
+            margin-right: 4px;
+            color: #2563eb;
+        }
+
+    td {
+        padding: 14px 12px;
+        font-size: 14px;
+        border-bottom: 1px solid #f3f4f6;
+        color: #0f172a;
+    }
+
+    tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* ===== Status Badges ===== */
+    .status-badge {
+        padding: 5px 14px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .status-badge i {
+            font-size: 10px;
+        }
+
+    .status-Confirmed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-Pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-Cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-CheckedIn {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-CheckedOut {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    /* ===== Action Buttons ===== */
+    .action-group {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
     .btn-sm {
-        padding: 4px 12px;
-        border-radius: 6px;
-        border: 1px solid #e5e7eb;
+        padding: 5px 14px;
+        border-radius: 8px;
+        border: 1.5px solid #e5e7eb;
         background: white;
         font-size: 12px;
         cursor: pointer;
         text-decoration: none;
         color: #4b5563;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
     }
 
         .btn-sm:hover {
             border-color: #2563eb;
             color: #2563eb;
+            transform: translateY(-1px);
         }
 
         .btn-sm.primary {
@@ -123,6 +408,18 @@
 
             .btn-sm.primary:hover {
                 background: #1d4ed8;
+                border-color: #1d4ed8;
+            }
+
+        .btn-sm.success {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+            .btn-sm.success:hover {
+                background: #059669;
+                border-color: #059669;
             }
 
         .btn-sm.danger {
@@ -132,202 +429,290 @@
 
             .btn-sm.danger:hover {
                 background: #fee2e2;
+                border-color: #dc2626;
             }
 
-    .status-badge {
-        padding: 4px 12px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 600;
-    }
-
-    .status-Confirmed {
-        background: #dcfce7;
-        color: #15803d;
-    }
-
-    .status-Pending {
-        background: #fef9c3;
-        color: #a16207;
-    }
-
-    .status-Cancelled {
-        background: #fee2e2;
-        color: #b91c1c;
-    }
-
-    .status-CheckedIn {
-        background: #dbeafe;
-        color: #1d4ed8;
-    }
-
-    .status-CheckedOut {
-        background: #f3f4f6;
-        color: #4b5563;
-    }
-
-    .admin-table-section {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 800px;
-    }
-
-    th {
-        text-align: left;
+    /* ===== Status Select ===== */
+    .status-select {
+        padding: 5px 10px;
+        border-radius: 8px;
+        border: 1.5px solid #e5e7eb;
         font-size: 12px;
-        color: #6b7280;
-        font-weight: 600;
-        text-transform: uppercase;
-        padding: 12px;
-        border-bottom: 2px solid #f0f0f0;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
-    td {
-        padding: 12px;
-        font-size: 14px;
-        border-bottom: 1px solid #f3f4f6;
-    }
+        .status-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
 
-    .action-group {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
+    /* ===== Empty State ===== */
     .empty-state {
         text-align: center;
-        padding: 40px 20px;
+        padding: 60px 20px;
         color: #9ca3af;
     }
 
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 12px;
-            display: block;
+        .empty-state .icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
         }
 
-    .toast-success {
-        padding: 12px 20px;
-        border-radius: 10px;
-        margin-bottom: 16px;
-        background: #dcfce7;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-        font-weight: 500;
-        font-size: 14px;
-    }
+            .empty-state .icon i {
+                font-size: 36px;
+                color: #94a3b8;
+            }
 
-    .toast-error {
-        padding: 12px 20px;
-        border-radius: 10px;
-        margin-bottom: 16px;
-        background: #fee2e2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
-        font-weight: 500;
-        font-size: 14px;
-    }
+        .empty-state h4 {
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
 
+        .empty-state p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+    /* ===== Responsive ===== */
     @@media (max-width: 768px) {
         .filters-bar {
             grid-template-columns: 1fr;
+            padding: 18px 20px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .admin-wrapper {
+            padding: 0 16px;
+        }
+
+        .admin-table-section {
+            padding: 16px;
+        }
+
+        .btn-filter {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .table-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .admin-table-section {
+            padding: 12px;
+        }
+
+        .action-group {
+            flex-direction: column;
+        }
+
+        .btn-sm {
+            justify-content: center;
         }
     }
 </style>
 
 <div class="admin-wrapper">
+    <!-- ===== Page Header ===== -->
     <div class="page-header">
-        <h2>Manage Reservations</h2>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="@Url.Action("Dashboard", "Admin")" class="btn-primary" style="background: #6b7280;">
-                <i class="fa-regular fa-arrow-left"></i> Back
+        <div class="title-group">
+            <div class="icon-wrapper">
+                <i class="bi bi-calendar-check"></i>
+            </div>  
+            <div>
+                <h2>
+                    Manage Reservations
+                    <small>View, filter, and update all bookings</small>
+                </h2>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="@Url.Action("Dashboard", "Admin")" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>
     </div>
 
+    <!-- ===== Toast Messages ===== -->
     @if (TempData["Success"] != null)
     {
-        <div class="toast-success">@TempData["Success"]</div>
+        <div class="toast-success">
+            <i class="fas fa-check-circle"></i>
+            @TempData["Success"]
+        </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="toast-error">@TempData["Error"]</div>
+        <div class="toast-error">
+            <i class="fas fa-exclamation-circle"></i>
+            @TempData["Error"]
+        </div>
     }
 
-    <!-- Filters -->
+    <!-- ===== Filters ===== -->
     <form class="filters-bar" method="get" asp-controller="Admin" asp-action="Reservations">
-        <div>
-            <label class="form-label">Date From</label>
+        <div class="form-group">
+            <label class="form-label"><i class="fas fa-calendar-alt"></i> Date From</label>
             <input type="date" class="form-control" name="fromDate" />
         </div>
-        <div>
-            <label class="form-label">Date To</label>
+        <div class="form-group">
+            <label class="form-label"><i class="fas fa-calendar-alt"></i> Date To</label>
             <input type="date" class="form-control" name="toDate" />
         </div>
-        <div>
-            <label class="form-label">Status</label>
+        <div class="form-group">
+            <label class="form-label"><i class="fas fa-filter"></i> Status</label>
             <select class="form-control" name="status">
                 <option value="">All Statuses</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Pending">Pending</option>
-                <option value="Cancelled">Cancelled</option>
-                <option value="CheckedIn">Checked In</option>
-                <option value="CheckedOut">Checked Out</option>
+                <option value="Confirmed">✅ Confirmed</option>
+                <option value="Pending">⏳ Pending</option>
+                <option value="Cancelled">❌ Cancelled</option>
+                <option value="CheckedIn">🏨 Checked In</option>
+                <option value="CheckedOut">🚪 Checked Out</option>
             </select>
         </div>
-        <button type="submit" class="btn-filter"><i class="fa-solid fa-filter"></i> Apply</button>
+        <button type="submit" class="btn-filter">
+            <i class="bi bi-funnel"></i>
+            Apply Filters
+        </button>
     </form>
 
-    <!-- Table -->
+    <!-- ===== Table ===== -->
     <div class="admin-table-section">
+        <div class="table-header">
+            <h3>
+                <i class="fas fa-list" style="color:#2563eb;"></i> All Reservations
+            </h3>
+            <span class="count-badge">
+                <i class="fas fa-hashtag"></i> @reservations.Count() entries
+            </span>
+        </div>
+
         @if (reservations.Any())
         {
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Guest</th>
-                        <th>Property</th>
-                        <th>Check-In</th>
-                        <th>Check-Out</th>
-                        <th>Guests</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>
+                            <i class="bi bi-hash"></i>
+                            #
+                        </th>
+
+                        <th>
+                            <i class="bi bi-person"></i>
+                            Guest
+                        </th>
+
+                        <th>
+                            <i class="bi bi-building"></i>
+                            Property
+                        </th>
+
+                        <th>
+                            <i class="bi bi-calendar-check"></i>
+                            Check-In
+                        </th>
+
+                        <th>
+                            <i class="bi bi-calendar-x"></i>
+                            Check-Out
+                        </th>
+
+                        <th>
+                            <i class="bi bi-people"></i>
+                            Guests
+                        </th>
+
+                        <th>
+                            <i class="bi bi-currency-dollar"></i>
+                            Total
+                        </th>
+
+                        <th>
+                            <i class="bi bi-circle"></i>
+                            Status
+                        </th>
+
+                        <th>
+                            <i class="bi bi-gear"></i>
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var r in reservations)
                     {
                         <tr>
-                            <td><strong>@r.ReservationNumber</strong></td>
-                            <td>@r.UserName</td>
+                            <td><strong style="color:#2563eb;">@r.ReservationNumber</strong></td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div style="width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg, #2563eb, #7c3aed); display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:600;">
+                                        @(r.UserName?.FirstOrDefault().ToString().ToUpper() ?? "G")
+                                    </div>
+                                    <span>@r.UserName</span>
+                                </div>
+                            </td>
                             <td>@r.PropertyName</td>
                             <td>@r.CheckInDate.ToString("MMM dd, yyyy")</td>
                             <td>@r.CheckOutDate.ToString("MMM dd, yyyy")</td>
-                            <td>@r.NumberOfGuests</td>
-                            <td>@r.Currency @r.TotalPrice.ToString("N0")</td>
-                            <td><span class="status-badge status-@r.Status">@r.Status</span></td>
+                            <td><span style="font-weight:600;">@r.NumberOfGuests</span></td>
+                            <td><span style="font-weight:700; color:#2563eb;">@r.Currency @r.TotalPrice.ToString("N0")</span></td>
+                            <td>
+                                <span class="status-badge status-@r.Status">
+
+                                    @if (r.Status == "Confirmed")
+                                    {
+                                        <i class="bi bi-check-circle"></i>
+                                    }
+                                    else if (r.Status == "Pending")
+                                    {
+                                        <i class="bi bi-clock"></i>
+                                    }
+                                    else if (r.Status == "Cancelled")
+                                    {
+                                        <i class="bi bi-x-circle"></i>
+                                    }
+                                    else if (r.Status == "CheckedIn")
+                                    {
+                                        <i class="bi bi-door-open"></i>
+                                    }
+                                    else if (r.Status == "CheckedOut")
+                                    {
+                                        <i class="bi bi-door-closed"></i>
+                                    }
+
+                                    @r.Status
+                                </span>
+                            </td>
                             <td>
                                 <div class="action-group">
-                                    <a href="@Url.Action("AdminDetails", "Reservation", new { id = r.Id })" class="btn-sm primary">View</a>
+                                    <a href="@Url.Action("AdminDetails", "Reservation", new { id = r.Id })" class="btn-sm primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
                                     <form asp-controller="Reservation" asp-action="UpdateStatus" method="post" style="display: inline;">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@r.Id" />
-                                        <select name="status" onchange="this.form.submit()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #e5e7eb; font-size: 12px;">
-                                            <option value="Confirmed" selected="@(r.Status == "Confirmed")">Confirmed</option>
-                                            <option value="Pending" selected="@(r.Status == "Pending")">Pending</option>
-                                            <option value="CheckedIn" selected="@(r.Status == "CheckedIn")">Checked In</option>
-                                            <option value="CheckedOut" selected="@(r.Status == "CheckedOut")">Checked Out</option>
-                                            <option value="Cancelled" selected="@(r.Status == "Cancelled")">Cancelled</option>
+                                        <select name="status" onchange="this.form.submit()" class="status-select">
+                                            <option value="Confirmed" selected="@(r.Status == "Confirmed")">✅ Confirmed</option>
+                                            <option value="Pending" selected="@(r.Status == "Pending")">⏳ Pending</option>
+                                            <option value="CheckedIn" selected="@(r.Status == "CheckedIn")">🏨 Checked In</option>
+                                            <option value="CheckedOut" selected="@(r.Status == "CheckedOut")">🚪 Checked Out</option>
+                                            <option value="Cancelled" selected="@(r.Status == "Cancelled")">❌ Cancelled</option>
                                         </select>
                                     </form>
                                 </div>
@@ -340,9 +725,27 @@
         else
         {
             <div class="empty-state">
-                <i class="fa-regular fa-calendar"></i>
-                <p>No reservations found</p>
+                <div class="icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+                <h4>No Reservations Found</h4>
+                <p>Try adjusting your filters or check back later.</p>
             </div>
         }
     </div>
 </div>
+
+<script>
+    // Auto-hide toast messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            document.querySelectorAll('.toast-success, .toast-error').forEach(function(toast) {
+                toast.style.transition = 'opacity 0.5s ease';
+                toast.style.opacity = '0';
+                setTimeout(function() {
+                    toast.remove();
+                }, 500);
+            });
+        }, 5000);
+    });
+</script>

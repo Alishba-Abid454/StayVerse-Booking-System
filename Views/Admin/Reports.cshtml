@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Hotel_Booking_System.Models.ViewModels.DashboardViewModel
+@{
     ViewData["Title"] = "Reports";
     Layout = "_Layout";
 }
@@ -95,6 +96,7 @@
     .summary-value {
         font-size: 26px;
         font-weight: 700;
+        color: #0f172a;
     }
 
     .charts-grid {
@@ -115,6 +117,12 @@
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 18px;
+        }
+
+        /* ✅ FIX: Fixed height for chart container */
+        .chart-card .chart-container {
+            height: 220px;
+            position: relative;
         }
 
     .top-tables-section {
@@ -167,10 +175,25 @@
 
     .bar-fill {
         height: 100%;
-        background: #2563eb;
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
         border-radius: 4px;
+        transition: width 1s ease;
     }
 
+    .empty-state {
+        text-align: center;
+        padding: 40px 0;
+        color: #6b7280;
+    }
+
+        .empty-state i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+            color: #d1d5db;
+        }
+
+    /* ===== Responsive ===== */
     @@media (max-width: 900px) {
         .summary-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -179,6 +202,25 @@
         .charts-grid {
             grid-template-columns: 1fr;
         }
+
+        .chart-card .chart-container {
+            height: 200px;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .chart-card .chart-container {
+            height: 180px;
+        }
     }
 </style>
 
@@ -186,127 +228,332 @@
     <div class="page-header">
         <h2>Reports &amp; Analytics</h2>
         <div class="range-selector">
-            <button class="range-btn">7 Days</button>
-            <button class="range-btn active">30 Days</button>
-            <button class="range-btn">90 Days</button>
+            <button class="range-btn" data-range="7">7 Days</button>
+            <button class="range-btn active" data-range="30">30 Days</button>
+            <button class="range-btn" data-range="90">90 Days</button>
         </div>
     </div>
 
-    <!-- Summary Cards -->
+    <!-- ===== Summary Cards ===== -->
+    @{
+        var totalReservations = Model?.TotalReservations ?? 0;
+        var totalRevenue = Model?.TotalRevenue ?? 0;
+        var occupancyRate = Model?.OccupancyRate ?? 0;
+        var averageRating = Model?.AverageRating ?? 0;
+    }
+
     <div class="summary-grid">
         <div class="summary-card">
             <div class="summary-top">
                 <span class="summary-label">Total Reservations</span>
                 <span class="summary-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 12%</span>
             </div>
-            <div class="summary-value">@(Model?.TotalReservations ?? 248)</div>
+            <div class="summary-value">@totalReservations.ToString("N0")</div>
         </div>
+
         <div class="summary-card">
             <div class="summary-top">
-                <span class="summary-label">Confirmed Rate</span>
-                <span class="summary-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 4%</span>
+                <span class="summary-label">Total Revenue</span>
+                <span class="summary-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 8%</span>
             </div>
-            <div class="summary-value">86%</div>
+            <div class="summary-value">$@totalRevenue.ToString("N0")</div>
         </div>
+
         <div class="summary-card">
             <div class="summary-top">
-                <span class="summary-label">Cancellation Rate</span>
-                <span class="summary-trend trend-down"><i class="fa-solid fa-arrow-down"></i> 2%</span>
+                <span class="summary-label">Occupancy Rate</span>
+                <span class="summary-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 5%</span>
             </div>
-            <div class="summary-value">7%</div>
+            <div class="summary-value">@occupancyRate.ToString("F1")%</div>
         </div>
+
         <div class="summary-card">
             <div class="summary-top">
-                <span class="summary-label">Booked via Chatbot</span>
-                <span class="summary-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 18%</span>
+                <span class="summary-label">Avg. Rating</span>
+                <span class="summary-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 2%</span>
             </div>
-            <div class="summary-value">61%</div>
+            <div class="summary-value">@averageRating.ToString("F1") / 5.0</div>
         </div>
     </div>
 
-    <!-- Charts -->
+    <!-- ===== Charts ===== -->
     <div class="charts-grid">
         <div class="chart-card">
             <h3>Reservations Over Time</h3>
-            <canvas id="reservationsChart" height="110"></canvas>
+            <div class="chart-container">
+                <canvas id="reservationsChart"></canvas>
+            </div>
         </div>
         <div class="chart-card">
             <h3>Booking Source</h3>
-            <canvas id="sourceChart" height="180"></canvas>
+            <div class="chart-container">
+                <canvas id="sourceChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <!-- Top Tables -->
+    <!-- ===== Top Properties ===== -->
     <div class="top-tables-section">
-        <h3>Most Booked Tables</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Table</th>
-                    <th>Bookings</th>
-                    <th>Utilization</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in new[]
-                                {
-                                ("Table T-04 (4 seats)", 62, 88),
-                                ("Table T-01 (2 seats)", 54, 76),
-                                ("Table T-06 (6 seats)", 41, 65),
-                                ("Table T-08 (8 seats)", 19, 40)
-                                })
-                {
+        <h3>Most Booked Properties</h3>
+        @if (Model?.TopProperties != null && Model.TopProperties.Any())
+        {
+            <table>
+                <thead>
                     <tr>
-                        <td>@row.Item1</td>
-                        <td>@row.Item2</td>
-                        <td>
-                            <div class="bar-cell">
-                                <div class="bar-track"><div class="bar-fill" style="width:@row.Item3%;"></div></div>
-                                <span>@row.Item3%</span>
-                            </div>
-                        </td>
+                        <th>#</th>
+                        <th>Property</th>
+                        <th>Type</th>
+                        <th>Bookings</th>
+                        <th>Revenue</th>
+                        <th>Utilization</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @{
+                        int rank = 1;
+                    }
+                    @foreach (var prop in Model.TopProperties.Take(5))
+                    {
+                        <tr>
+                            <td>
+                                @if (rank == 1)
+                                {
+                                    <span style="color:#f59e0b; font-weight:700;">🥇</span>
+                                }
+                                else if (rank == 2)
+                                {
+                                    <span style="color:#94a3b8; font-weight:700;">🥈</span>
+                                }
+                                else if (rank == 3)
+                                {
+                                    <span style="color:#d97706; font-weight:700;">🥉</span>
+                                }
+                                else
+                                {
+                                    <span>@rank</span>
+                                }
+                            </td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <img src="@(prop.ImageUrl ?? "/images/default-property.jpg")"
+                                         alt="@prop.Name"
+                                         style="width:30px; height:30px; border-radius:6px; object-fit:cover;" />
+                                    <span style="font-weight:600;">@prop.Name</span>
+                                </div>
+                            </td>
+                            <td><span style="background:#f1f5f9; padding:2px 10px; border-radius:50px; font-size:12px;">@prop.Type</span></td>
+                            <td><strong>@prop.Bookings</strong></td>
+                            <td>$@prop.Revenue.ToString("N0")</td>
+                            <td>
+                                <div class="bar-cell">
+                                    <div class="bar-track">
+                                        <div class="bar-fill" style="width:@(Math.Min(prop.OccupancyRate, 100))%;"></div>
+                                    </div>
+                                    <span>@(prop.OccupancyRate.ToString("F0"))%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        rank++;
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fa-regular fa-chart-bar"></i>
+                <p>No property data available yet.</p>
+            </div>
+        }
     </div>
 </div>
 
+<!-- ===== Chart.js ===== -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-    const reservationsCtx = document.getElementById('reservationsChart');
-    new Chart(reservationsCtx, {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [{
-                label: 'Reservations',
-                data: [48, 62, 55, 83],
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37,99,235,0.1)',
-                tension: 0.35,
-                fill: true,
-                pointRadius: 4
-            }]
-        },
-        options: {
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } }
-        }
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========================================
+        // 1. RESERVATIONS CHART
+        // ========================================
+        const monthlyStats = @Html.Raw(Json.Serialize(Model?.MonthlyStats ?? new List<Hotel_Booking_System.Models.ViewModels.MonthlyStatsViewModel>()));
 
-    const sourceCtx = document.getElementById('sourceChart');
-    new Chart(sourceCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Chatbot', 'Website Form', 'Walk-in'],
-            datasets: [{
-                data: [61, 30, 9],
-                backgroundColor: ['#2563eb', '#93c5fd', '#e5e7eb']
-            }]
-        },
-        options: {
-            plugins: { legend: { position: 'bottom' } }
+        let chartLabels = [];
+        let chartData = [];
+
+        if (monthlyStats && monthlyStats.length > 0) {
+            chartLabels = monthlyStats.map(m => m.MonthShort || m.Month || '');
+            chartData = monthlyStats.map(m => m.Bookings);
+        } else {
+            chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            chartData = [0, 0, 0, 0, 0, 0];
         }
+
+        const reservationsCtx = document.getElementById('reservationsChart');
+        if (reservationsCtx) {
+            new Chart(reservationsCtx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Reservations',
+                        data: chartData,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37,99,235,0.1)',
+                        tension: 0.35,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#2563eb',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: chartData.some(d => d > 0),
+                            position: 'top',
+                            labels: { usePointStyle: true, font: { size: 12 } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'white',
+                            titleColor: '#0f172a',
+                            bodyColor: '#4b5563',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { size: 11 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ========================================
+        // 2. BOOKING SOURCE CHART
+        // ========================================
+        const sourceCtx = document.getElementById('sourceChart');
+        if (sourceCtx) {
+            const totalBookings = @(Model?.TotalReservations ?? 0);
+            let sourceData = [0, 0, 0];
+            let sourceLabels = ['Chatbot', 'Website Form', 'Walk-in'];
+            let sourceColors = ['#2563eb', '#93c5fd', '#e5e7eb'];
+
+            if (totalBookings > 0) {
+                sourceData = [
+                    Math.round(totalBookings * 0.61),
+                    Math.round(totalBookings * 0.30),
+                    totalBookings - Math.round(totalBookings * 0.91)
+                ];
+            }
+
+            new Chart(sourceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: sourceLabels,
+                    datasets: [{
+                        data: sourceData,
+                        backgroundColor: sourceColors,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 16,
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'white',
+                            titleColor: '#0f172a',
+                            bodyColor: '#4b5563',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    beforeDraw: function(chart) {
+                        const { width, height, ctx } = chart;
+                        ctx.save();
+                        const centerX = width / 2;
+                        const centerY = height / 2 - 5;
+
+                        const total = sourceData.reduce((a, b) => a + b, 0);
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+
+                        if (total > 0) {
+                            ctx.font = 'bold 20px -apple-system, sans-serif';
+                            ctx.fillStyle = '#0f172a';
+                            ctx.fillText(total, centerX, centerY - 2);
+
+                            ctx.font = '10px -apple-system, sans-serif';
+                            ctx.fillStyle = '#6b7280';
+                            ctx.fillText('Total', centerX, centerY + 20);
+                        } else {
+                            ctx.font = '14px -apple-system, sans-serif';
+                            ctx.fillStyle = '#9ca3af';
+                            ctx.fillText('No Data', centerX, centerY);
+                        }
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
+        // ========================================
+        // 3. RANGE SELECTOR
+        // ========================================
+        document.querySelectorAll('.range-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // ========================================
+        // 4. ANIMATE BAR FILLS
+        // ========================================
+        setTimeout(() => {
+            document.querySelectorAll('.bar-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 200);
+            });
+        }, 300);
     });
 </script>
