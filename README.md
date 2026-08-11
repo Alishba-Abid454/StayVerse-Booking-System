@@ -1,4 +1,4 @@
-# ?? StayVerse - Booking System
+# StayVerse - Booking System
 
 StayVerse is a full-stack web-based hospitality booking system developed using **ASP.NET Core MVC, C#, Entity Framework Core, and SQL Server**. The platform allows users to explore hospitality properties, make reservations, and manage their bookings through an easy-to-use interface.
 
